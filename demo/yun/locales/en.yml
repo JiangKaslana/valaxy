@@ -3,11 +3,11 @@ docs:
 excerpt:
   ai: AI-Generated Excerpt
 siteConfig:
-  title: JiangKaslana's Blog
+  title: Kiana's Blog
   subtitle: Notes on technology, life, and ideas
-  description: JiangKaslana's personal blog for technical notes, project logs, and everyday thoughts.
+  description: Kiana's personal blog for technical notes, project logs, and everyday thoughts.
   author:
-    name: JiangKaslana
+    name: Kiana
   social:
     bilibili: Bilibili
   sponsor:

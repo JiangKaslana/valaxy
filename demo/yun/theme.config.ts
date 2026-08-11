@@ -10,10 +10,10 @@ export default defineThemeConfig({
   notice: { enable: false },
   nav: [
     { text: 'menu.posts', link: '/posts/', icon: 'i-ri-article-line' },
-    { text: 'About', link: '/about', icon: 'i-ri-user-line' },
+    { text: '关于我', link: '/about', icon: 'i-ri-user-line' },
   ],
   pages: [
-    { name: 'About', url: '/about', icon: 'i-ri-user-line', color: 'var(--va-c-text)' },
+    { name: '关于我', url: '/about', icon: 'i-ri-user-line', color: 'var(--va-c-text)' },
   ],
   footer: { icon: { animated: true } },
 })

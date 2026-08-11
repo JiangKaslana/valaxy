@@ -1,21 +1,21 @@
 docs:
-  view_docs: Docs
+  view_docs: 查看文档
 excerpt:
-  ai: AI excerpt
+  ai: AI 生成的摘要
 post:
-  time_warning: This post was updated {ago} ago.
+  time_warning: 本文最后更新于 {ago}，内容可能已经发生变化。
 siteConfig:
-  title: Kiana's Blog
-  subtitle: Notes on technology, life, and ideas
-  description: Kiana's personal blog.
+  title: Kiana 的博客
+  subtitle: 记录技术、生活与思考
+  description: Kiana 的个人博客，分享技术实践、项目记录与日常思考。
   author:
     name: Kiana
   social:
-    bilibili: Bilibili
+    bilibili: 哔哩哔哩
   sponsor:
-    alipay: Alipay
-    wechatpay: WeChat Pay
+    alipay: 支付宝
+    wechatpay: 微信支付
 tag:
-  notes: Notes
+  notes: 笔记
 category:
-  test: Test
+  test: 测试
