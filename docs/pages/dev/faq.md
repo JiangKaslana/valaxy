@@ -1,7 +1,5 @@
 ---
-title:
-  en: FAQ
-  zh-CN: 常见问题
+title: FAQ
 categories:
   - dev
 end: false
@@ -9,35 +7,50 @@ end: false
 
 <details>
 
-<summary>已解决</summary>
+<summary>Resolved</summary>
 
-## JavaScript heap out of memory
-
-Limit `--max-old-space-size` to reproduce.
-
-```bash
-pnpm test:space
-```
-
-~~超过 50 篇文章时需要超过 2G 内存。~~
-升级 vite-ssg （使用 p-queue 队列）已解决。
-
-## `background-attachment: fixed` iOS 不支持
+## `background-attachment: fixed` not supported on iOS
 
 > iOS has an issue preventing background-attachment: fixed from being used with background-size: cover.
 > [The Fixed Background Attachment Hack | CSS Tricks](https://css-tricks.com/the-fixed-background-attachment-hack/)
 
-改为使用 `::before` 伪元素实现。
+Use `::before` pseudo-element instead.
 
 </details>
 
-## 合并
 
-使用 `defu`。
+## JavaScript heap out of memory
 
-但实测 `defu` faster than `@fastify/deepmerge`。
 
-合并单个配置：
+During SSG build (`valaxy build --ssg`), the built-in Valaxy SSG engine runs client build, server build, and page rendering in the same process. The Vite resolved config and plugin system from the build phase remain in memory, leaving limited heap space for the rendering phase.
+
+**Minimum memory requirement: `--max-old-space-size=4096` (~4 GB)** — the engine auto-respawns with this heap when needed.
+
+```bash
+# Reproduce tests
+pnpm test:space        # demo/yun
+pnpm test:space:docs   # docs
+```
+
+When the heap limit is below ~4 GB, the SSG engine automatically respawns the
+build process with `--max-old-space-size=4096` (and `--expose-gc` when available)
+so rendering has enough headroom. Page rendering runs at a default concurrency of
+20 (configurable via `vite.ssgOptions.concurrency`).
+
+If you still encounter OOM in CI environments, raise the heap limit via `NODE_OPTIONS`:
+
+```bash
+NODE_OPTIONS=--max-old-space-size=4096 pnpm build --ssg
+```
+
+
+## Merge
+
+Use `defu`.
+
+Testing shows `defu` is faster than `@fastify/deepmerge`.
+
+Merging a single config:
 
 - `defu`: 0.06ms
 - [`@fastify/deepmerge`](https://github.com/fastify/deepmerge): 0.256ms

@@ -9,7 +9,7 @@
 
 ```vue
 <script>
-import { defineBasicLoader } from 'unplugin-vue-router/data-loaders/basic'
+import { defineBasicLoader } from 'vue-router/experimental'
 
 export const usePageData = defineBasicLoader('/relativePath', async (_to) => {
   // custom basic loader
@@ -119,7 +119,7 @@ function staticImportedByEntry(
       getModuleInfo,
       cache,
       entryRE,
-      importStack.concat(id),
+      [...importStack, ...id],
     ),
   )
   cache.set(id, someImporterIs)

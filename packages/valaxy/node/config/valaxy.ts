@@ -23,6 +23,13 @@ export const defaultValaxyConfig: ValaxyNodeConfig = {
 
   build: {
     ssgForPagination: false,
+    foucGuard: {
+      enabled: true,
+      maxDuration: 5000,
+    },
+    taxonomyI18n: {
+      level: 'warn',
+    },
   },
 
   deploy: { },
@@ -48,12 +55,30 @@ export const defaultValaxyConfig: ValaxyNodeConfig = {
 
   features: {
     katex: true,
+    extractFirstImage: true,
+  },
+
+  math: false,
+
+  cdn: {
+    modules: [],
   },
 
   vite: {
     build: {
       emptyOutDir: true,
-      // cssCodeSplit: false,
+      /**
+       * Disable CSS code splitting to prevent layout shift (CLS) on first load.
+       *
+       * When enabled (default), Vite splits CSS into per-chunk files (e.g. `app.xxx.css`)
+       * that are loaded asynchronously, causing the full layout CSS to arrive late and
+       * trigger a visible reflow/repaint.
+       *
+       * With `cssCodeSplit: false`, all CSS is bundled into a single file, so the FOUC
+       * guard (`build.foucGuard`) can reliably detect when all styles are ready and
+       * reveal the page without a flash of unstyled content.
+       */
+      cssCodeSplit: false,
     },
   },
   vue: {
@@ -61,6 +86,31 @@ export const defaultValaxyConfig: ValaxyNodeConfig = {
   },
 
   devtools: true,
+}
+
+/**
+ * Whether MathJax is enabled (takes priority over KaTeX).
+ */
+export function isMathJaxEnabled(config?: ValaxyNodeConfig | null): boolean {
+  return !!config?.math
+}
+
+/**
+ * Whether KaTeX is enabled (disabled when MathJax is active).
+ */
+export function isKatexEnabled(config?: ValaxyNodeConfig | null): boolean {
+  if (config?.math)
+    return false
+  return config?.features?.katex !== false
+}
+
+/**
+ * Whether the KaTeX markdown-it plugin should be registered.
+ * Always true unless MathJax is active, so that per-page `frontmatter.katex: true`
+ * can work even when `features.katex` is globally `false`.
+ */
+export function isKatexPluginNeeded(config?: ValaxyNodeConfig | null): boolean {
+  return !config?.math
 }
 
 /**
@@ -88,8 +138,9 @@ export async function resolveValaxyConfigFromRoot(root: string, options?: Resolv
  */
 export const mergeValaxyConfig = createDefu((obj: any, key, value) => {
   if (isFunction(obj[key]) && isFunction(value)) {
+    const original = obj[key]
     obj[key] = function (...args: any[]) {
-      obj[key].call(this, ...args)
+      original.call(this, ...args)
       value.call(this, ...args)
     }
     return true

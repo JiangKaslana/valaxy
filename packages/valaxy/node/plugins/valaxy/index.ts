@@ -2,7 +2,7 @@
  * @packageDocumentation valaxy plugin
  */
 
-import type { Plugin, ResolvedConfig } from 'vite'
+import type { Plugin } from 'vite'
 import type { DefaultTheme, PageDataPayload, Pkg, SiteConfig } from '../../../types'
 import type { ResolvedValaxyOptions, ValaxyNodeConfig, ValaxyServerOptions } from '../../types'
 import { consola } from 'consola'
@@ -55,26 +55,21 @@ export async function createValaxyPlugin(options: ResolvedValaxyOptions, serverO
   let hasDeadLinks = false
 
   let markdownToVue: Awaited<ReturnType<typeof createMarkdownToVueRenderFn>>
-  let viteConfig: ResolvedConfig
 
   return [
     {
       name: 'valaxy:loader',
       enforce: 'pre',
 
-      async configResolved(resolvedConfig) {
-        viteConfig = resolvedConfig
+      async configResolved(_resolvedConfig) {
         markdownToVue = await createMarkdownToVueRenderFn(
           options,
-          viteConfig,
         )
       },
 
       configureServer(server) {
         if (options.configFile) {
           server.watcher.add(options.configFile)
-          // @TODO configDeps
-          // configDeps.forEach((file) => server.watcher.add(file))
         }
 
         server.watcher.add([
@@ -105,9 +100,6 @@ export async function createValaxyPlugin(options: ResolvedValaxyOptions, serverO
             // clientRoot: options.clientRoot,
           }))}`
         }
-
-        // TODO: custom dynamic css vars
-        // if (id === 'virtual:valaxy-css-vars') {}
 
         // root client
         if (id === '/@valaxyjs/AppVue')
@@ -149,7 +141,7 @@ export async function createValaxyPlugin(options: ResolvedValaxyOptions, serverO
       },
 
       renderStart() {
-        if (hasDeadLinks && !(valaxyConfig.ignoreDeadLinks || valaxyConfig.build.ignoreDeadLinks))
+        if (hasDeadLinks && !valaxyConfig.build.ignoreDeadLinks)
           throw new Error('One or more pages contain dead links.')
       },
 
@@ -168,7 +160,7 @@ export async function createValaxyPlugin(options: ResolvedValaxyOptions, serverO
 
           const moduleIds = ['/@valaxyjs/config', '/@valaxyjs/context']
           const moduleEntries = [
-            ...Array.from(moduleIds).map(id => server.moduleGraph.getModuleById(id)),
+            ...Array.from(moduleIds, id => server.moduleGraph.getModuleById(id)),
           ].filter(<T>(item: T): item is NonNullable<T> => !!item)
 
           return moduleEntries

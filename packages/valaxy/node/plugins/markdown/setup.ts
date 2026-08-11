@@ -9,6 +9,7 @@ import type Token from 'markdown-it/lib/token.mjs'
 import type { UserSiteConfig } from '../../../types'
 
 import type { ResolvedValaxyOptions } from '../../types'
+import type { MarkdownBase } from './base'
 import type { ThemeOptions } from './types'
 
 import {
@@ -30,11 +31,16 @@ import imageFigures from 'markdown-it-image-figures'
 
 import TaskLists from 'markdown-it-task-lists'
 import { groupIconMdPlugin } from 'vitepress-plugin-group-icons'
+import { isKatexPluginNeeded, isMathJaxEnabled } from '../../config/valaxy'
+
+import { createMarkdownBaseResolver } from './base'
+import { isPromiseLike } from './plugins/async-utils'
+import { imagePlugin } from './plugins/image'
 import { linkPlugin } from './plugins/link'
 import { containerPlugin } from './plugins/markdown-it/container'
 import { footnoteTooltipPlugin } from './plugins/markdown-it/footnoteTooltip'
-import { highlightLinePlugin } from './plugins/markdown-it/highlightLines'
 
+import { highlightLinePlugin } from './plugins/markdown-it/highlightLines'
 import Katex from './plugins/markdown-it/katex'
 import { lineNumberPlugin } from './plugins/markdown-it/lineNumbers'
 import { preWrapperPlugin } from './plugins/markdown-it/preWrapper'
@@ -46,11 +52,12 @@ export async function setupMarkdownPlugins(
   md: MarkdownItAsync,
   options?: ResolvedValaxyOptions,
   // isExcerpt = false,
-  base = '/',
+  base: MarkdownBase = options?.config.vite?.base || '/',
 ) {
   const mdOptions = options?.config.markdown || {}
   const theme = mdOptions.theme ?? defaultCodeTheme
   const siteConfig: UserSiteConfig = options?.config.siteConfig || {}
+  const resolveBase = createMarkdownBaseResolver(base)
 
   if (mdOptions.preConfig)
     mdOptions.preConfig(md)
@@ -77,8 +84,9 @@ export async function setupMarkdownPlugins(
         rel: 'noreferrer',
         ...mdOptions.externalLinks,
       },
-      base,
+      resolveBase,
     )
+    .use(imagePlugin)
 
   // ref vitepress
   md.use(lineNumberPlugin, mdOptions.lineNumbers)
@@ -136,7 +144,41 @@ export async function setupMarkdownPlugins(
       ...mdOptions.toc,
     } as TocPluginOptions)
 
-  md.use(Katex, mdOptions.katex)
+  // Math rendering: MathJax or KaTeX (mutually exclusive, MathJax takes priority)
+  if (isMathJaxEnabled(options?.config)) {
+    try {
+      const mathPlugin = await import('markdown-it-mathjax3')
+      const mathjaxPlugin = mathPlugin.default ?? mathPlugin
+      mathjaxPlugin(md, {
+        ...(mdOptions.mathjax || {}),
+      })
+      // Add v-pre to prevent Vue from processing MathJax SVG output
+      const origMathInline = md.renderer.rules.math_inline!
+      md.renderer.rules.math_inline = function (...args) {
+        return origMathInline
+          .apply(this, args)
+          .replace(/^<mjx-container /, '<mjx-container v-pre ')
+      }
+      const origMathBlock = md.renderer.rules.math_block!
+      md.renderer.rules.math_block = function (...args) {
+        return origMathBlock
+          .apply(this, args)
+          .replace(/^<mjx-container /, '<mjx-container v-pre tabindex="0" ')
+      }
+    }
+    catch {
+      throw new Error(
+        'You need to install `markdown-it-mathjax3` to use MathJax. '
+        + 'Run: pnpm add markdown-it-mathjax3',
+      )
+    }
+  }
+  else if (isKatexPluginNeeded(options?.config)) {
+    md.use(Katex, {
+      katexOptions: mdOptions.katex,
+      globalEnabled: options?.config?.features?.katex !== false,
+    })
+  }
 
   const vanillaLazyload = options?.config.siteConfig.vanillaLazyload || { enable: false }
   // markdown-it-image-figures
@@ -163,9 +205,53 @@ export async function setupMarkdownPlugins(
 
   md.use(TaskLists)
 
+  // Save the fence rule before groupIconMdPlugin wraps it
+  const fenceBeforeGroupIcon = md.renderer.rules.fence!
+
   md.use(groupIconMdPlugin, {
     titleBar: { includeSnippet: true },
   })
+
+  // Patch: groupIconMdPlugin wraps fence result in template literals,
+  // which converts Promise<string> to "[object Promise]".
+  // Re-implement its fence wrapper with async awareness.
+  // markdown-exit's fence rule may return Promise<string> for async highlight.
+  // Type-assert because markdown-it's RenderRule type doesn't account for this.
+  md.renderer.rules.fence = ((...args: Parameters<typeof fenceBeforeGroupIcon>) => {
+    const [tokens, idx] = args
+    const token = tokens[idx]
+
+    // Detect if we're inside a code-group
+    let isOnCodeGroup = false
+    for (let i = idx - 1; i >= 0; i--) {
+      if (tokens[i].type === 'container_code-group_open') {
+        isOnCodeGroup = true
+        break
+      }
+      if (tokens[i].type === 'container_code-group_close')
+        break
+    }
+
+    const title = token.info.match(/\[((?:[^[\]]|\[[^[\]]*\])*)\]/)
+    const isIncludedSnippet = true // titleBar.includeSnippet
+
+    if (!isOnCodeGroup && title && (!(token as any).src || isIncludedSnippet)) {
+      const namedIconMatchRegex = /(?:^|\s)icon:([\w-]+)(?:\s|$)/
+      const namedIconMatch = title[1].match(namedIconMatchRegex)
+      const innerResult = fenceBeforeGroupIcon(...args)
+
+      const titleText = namedIconMatch ? title![1].replace(namedIconMatch[0], '') : title![1]
+      const wrap = (code: string) =>
+        `<div class="vp-code-block-title">\n      <div class="vp-code-block-title-bar">\n          <span class="vp-code-block-title-text" data-title="${md.utils.escapeHtml(title![1])}">${md.utils.escapeHtml(titleText)}</span>\n      </div>\n        ${code}\n      </div>\n      `
+
+      return isPromiseLike(innerResult)
+        ? (innerResult as unknown as Promise<string>).then(wrap)
+        : wrap(innerResult as string)
+    }
+
+    // Non-title case: pass through
+    return fenceBeforeGroupIcon(...args)
+  }) as typeof fenceBeforeGroupIcon
 
   if (mdOptions.config)
     mdOptions.config(md)

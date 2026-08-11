@@ -20,7 +20,7 @@ useSchemaOrg([
 ])
 
 const route = useRoute()
-const photos = computed(() => route.meta.frontmatter.photos || [])
+const photos = computed(() => route.meta.frontmatter?.photos || [])
 
 const runtimeConfig = useRuntimeConfig()
 
@@ -60,11 +60,13 @@ const photosLength = computed(() => photos.value.length || galleryRef.value?.pho
             <div i-ri-arrow-go-back-line />
           </a>
         </div>
-        <ValaxyGalleryDecrypt v-if="encryptedPhotos" ref="galleryRef" :encrypted-photos="encryptedPhotos" />
+        <ValaxyGalleryDecrypt v-if="encryptedPhotos" ref="galleryRef" :encrypted-photos="encryptedPhotos">
+          <template #default="{ photos: decryptedPhotos }">
+            <YunGallery :photos="decryptedPhotos" />
+          </template>
+        </ValaxyGalleryDecrypt>
         <YunGallery v-else :photos="photos" />
       </component>
     </RouterView>
   </YunLayoutWrapper>
-
-  <YunFooter />
 </template>

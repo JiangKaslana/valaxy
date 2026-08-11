@@ -20,6 +20,7 @@
 
 - [English](./README.md) | **简体中文**
 - [English Docs](https://valaxy.site/?lang=en) | [中文文档](https://valaxy.site/?lang=zh-CN)
+- [主题 Press 文档](https://valaxy.site/zh/themes/press) | [主题 Press 预览](https://press.valaxy.site)
 - [Demo](https://yun.valaxy.site): <small>with [valaxy-theme-yun](./packages/valaxy-theme-yun/)</small>
 
 ## 使用
@@ -45,18 +46,18 @@ pnpm create valaxy
 
 ## 功能
 
-- ⚡️ [Vue 3](https://github.com/vuejs/vue-next), [Vite 5](https://github.com/vitejs/vite), [pnpm](https://pnpm.js.org/), [ESBuild](https://github.com/evanw/esbuild) - 快速
+- ⚡️ [Vue 3](https://github.com/vuejs/vue-next), [Vite 8](https://github.com/vitejs/vite), [pnpm](https://pnpm.js.org/), [Rolldown](https://github.com/rolldown/rolldown) - 快速
 - 🔥 配置 & Markdown 文件热更新
 - 🔧 `valaxy.config.ts` 的所有配置项皆有类型提示
 - 🗒 扩展 Markdown Frontmatter
-- 🗂 实现基于文件路由 by [unplugin-vue-router](https://github.com/posva/unplugin-vue-router)
+- 🗂 实现基于文件路由 by [vue-router](https://router.vuejs.org/file-based-routing/)
 - 📦 自动引入组件 by [unplugin-vue-components](https://github.com/antfu/unplugin-vue-components)
 - 🖨 静态站点生成 (SSG) by [vite-ssg](https://github.com/antfu/vite-ssg) (支持单页面应用！)
 - 🕸 RSS & Sitemap
 - 🎨 尽情使用 Tailwind CSS by [UnoCSS](https://github.com/antfu/unocss)
 - 🌍 [在同一页面通过 CSS 的 i18n](https://valaxy.site/guide/i18n)
 - 🔍 [通过 class 从图标集中使用图标](https://github.com/antfu/unocss/tree/main/packages/preset-icons) - [Icônes](https://icones.netlify.app/)
-- 👔 扩展主题 with [Layout system](https://github.com/JohnCampionJr/vite-plugin-vue-layouts)
+- 👔 扩展主题 with [Layout system](https://github.com/loicduong/vite-plugin-vue-layouts-next)
 - ⚙️ 单元测试 with [Vitest](https://github.com/vitest-dev/vitest)
 - ☁️ 零配置部署
   - [Netlify](https://www.netlify.com/) with `netlify.toml`

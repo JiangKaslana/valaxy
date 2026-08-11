@@ -1,30 +1,14 @@
 ---
-title:
-  en: Config
-  zh-CN: 基础配置
+title: Config
 categories:
   - config
 end: false
 ---
 
-## 配置说明 {lang="zh-CN"}
 
-## Configurations {lang="en"}
+## Configurations
 
-::: zh-CN
-为了便于配置，Valaxy 将配置分为了三种。
 
-`valaxy.config.ts` 是配置的主入口，它包含了以下配置。
-
-- `siteConfig`: 站点**信息**配置，这部分内容面向站点展示，且在不同主题中也是通用的格式
-- `themeConfig`: 主题配置，这部分内容仅在特定主题生效
-- `runtimeConfig`: 运行时的配置（由 Valaxy 自动生成），用户无需配置
-- 其他 Valaxy 通用配置内容（如需要在 Node 端处理的配置 `unocss`/`addons`）
-
-譬如：
-:::
-
-::: en
 To simplify config, Valaxy divided the configuration into 3.
 
 `valaxy.config.ts` is the main entry of configuration.
@@ -35,7 +19,6 @@ To simplify config, Valaxy divided the configuration into 3.
 - Other general Valaxy config (e.g., config that's needed for Node)
 
 For example:
-:::
 
 ```ts [valaxy.config.ts]
 import type { ThemeConfig } from 'valaxy-theme-yun'
@@ -53,6 +36,9 @@ export default defineValaxyConfig<ThemeConfig>({
 
   theme: 'yun',
   themeConfig: {
+    // Theme layout type: 'nimbo' (default, modern) or 'strato' (classic sidebar)
+    // See: https://github.com/YunYouJun/valaxy/blob/main/packages/valaxy-theme-yun/docs
+    type: 'nimbo',
     banner: {
       enable: true,
       title: '云游君的小站',
@@ -74,11 +60,10 @@ export default defineValaxyConfig<ThemeConfig>({
 })
 ```
 
-## 站点配置 {lang="zh-CN"}
 
-## Site Config {lang="en"}
+## Site Config
 
-> 更多详细配置可参见 [types/config.ts](https://github.com/YunYouJun/valaxy/blob/main/packages/valaxy/types/config.ts)。
+> For more details, see [types/config.ts](https://github.com/YunYouJun/valaxy/blob/main/packages/valaxy/types/config.ts).
 
 ::: details packages/valaxy/types/config.ts SiteConfig
 
@@ -86,59 +71,7 @@ export default defineValaxyConfig<ThemeConfig>({
 
 :::
 
-::: zh-CN
-站点**信息**配置，这部分内容面向站点展示且在任何主题也是通用的格式。
 
-你也可以将其写在 `site.config.ts` 中。
-
-譬如：
-
-```ts [site.config.ts]
-import { defineSiteConfig } from 'valaxy'
-
-export default defineSiteConfig({
-  lang: 'zh-CN',
-  title: 'Valaxy Theme Yun',
-  url: 'https://valaxy.site/',
-  author: {
-    name: '云游君',
-    avatar: 'https://www.yunyoujun.cn/images/avatar.jpg',
-  },
-  /**
-   * 站点图标
-   */
-  favicon: 'https://www.yunyoujun.cn/favicon.svg',
-  /**
-   * 副标题
-   */
-  subtitle: 'All at sea.',
-  description: 'Valaxy Theme Yun Preview.',
-  social: [
-    {
-      name: 'RSS',
-      link: '/atom.xml',
-      icon: 'i-ri-rss-line',
-      color: 'orange',
-    }
-  ],
-
-  sponsor: {
-    enable: true,
-    methods: [
-      {
-        name: '支付宝',
-        url: 'https://cdn.yunyoujun.cn/img/donate/alipay-qrcode.jpg',
-        color: '#00A3EE',
-        icon: 'i-ri-alipay-line',
-      },
-    ],
-  },
-})
-```
-
-:::
-
-::: en
 Site **info** config. This affects info displayed on the site, and is independent of themes.
 
 You can also write it in `site.config.ts`.
@@ -188,35 +121,33 @@ export default defineSiteConfig({
 })
 ```
 
-:::
 
-### 作者信息
+### Author Info
 
-更多字段可参考上文类型或直接在编辑器提示中查看。
+More fields can be found in the type definitions above or via editor IntelliSense.
 
 ```ts [site.config.ts]
 import { defineSiteConfig } from 'valaxy'
 
 export default defineSiteConfig({
   author: {
-    name: '你的名字',
+    name: 'Your Name',
     /**
      * Your avatar
-     * 头像链接
      */
     avatar: 'https://xxx',
-    intro: '个人简介'
+    intro: 'A brief introduction'
   }
 })
 ```
 
-### 时区
+### Timezone
 
-如果你使用 CI/CD 构建部署，远程机器可能处于其他时区，你可以设置时区。
+If you use CI/CD for building and deployment, the remote machine may be in a different timezone. You can set the timezone.
 
-此时将会默认使用该时区格式化时间，并设置 `process.env.TZ` 变量。
+This will format the time using the specified timezone by default and set the `process.env.TZ` variable.
 
-如果你托管于其他平台，你可能需要在对应平台添加环境变量。
+If you're hosting on other platforms, you may need to add environment variables on the corresponding platform.
 
 ```ts [site.config.ts]
 import { defineSiteConfig } from 'valaxy'
@@ -226,22 +157,9 @@ export default defineSiteConfig({
 })
 ```
 
-### 文章排序 {lang="zh-CN"}
 
-### Post Sorting {lang="en"}
+### Post Sorting
 
-::: zh-CN
-
-设置 `siteConfig.orderBy` 可控制文章列表的排序方式。
-
-- `date`: 按照文章的日期排序（默认）
-- `updated`: 按照文章的最后更新时间排序
-
-当 `lastUpdated` 开启时，将会为未设置 `updated` 的文章自动注入文件的最后更新时间。
-
-:::
-
-::: en
 
 Set `siteConfig.orderBy` to control the sorting method of the article list.
 
@@ -250,7 +168,6 @@ Set `siteConfig.orderBy` to control the sorting method of the article list.
 
 When `lastUpdated` is enabled, the last update time of the file will be automatically injected for articles that do not have `updated` set.
 
-:::
 
 ```ts [site.config.ts]
 import { defineSiteConfig } from 'valaxy'
@@ -262,29 +179,7 @@ export default defineSiteConfig({
 
 ### Default Frontmatter
 
-::: zh-CN
-为所有文章设置默认的 Frontmatter。
 
-譬如：
-
-> 设置 `time_warning: false`，则所有文章都不会显示阅读时间警告。
-
-```ts {7-9} [site.config.ts]
-import { defineSiteConfig } from 'valaxy'
-
-export default defineSiteConfig({
-  /**
-   * 默认 Frontmatter
-   */
-  frontmatter: {
-    time_warning: false,
-  }
-})
-```
-
-:::
-
-::: en
 Set the default Frontmatter for all posts.
 
 For example:
@@ -304,34 +199,9 @@ export default defineSiteConfig({
 })
 ```
 
-:::
 
-### 社交图标 {lang="zh-CN"}
+### Social Icons
 
-### Social Icons {lang="en"}
-
-::: zh-CN
-
-```ts
-export interface SocialLink {
-  /**
-   * 社交链接名称
-   */
-  name: string
-  link: string
-  /**
-   * 图标名称
-   * https://icones.js.org/
-   */
-  icon: string
-  color: string
-}
-```
-
-示例：
-:::
-
-::: en
 
 ```ts
 export interface SocialLink {
@@ -350,7 +220,6 @@ export interface SocialLink {
 ```
 
 Example:
-:::
 
 ```ts [site.config.ts]
 import { defineSiteConfig } from 'valaxy'
@@ -379,41 +248,10 @@ export default defineSiteConfig({
 })
 ```
 
-### 赞助 {lang="zh-CN"}
 
-### Sponsor {lang="en"}
+### Sponsor
 
-::: zh-CN
-> 在每篇文章末尾，展示赞助（打赏）信息。
 
-```ts [site.config.ts]
-import { defineSiteConfig } from 'valaxy'
-
-export default defineSiteConfig({
-  sponsor: {
-    enable: true,
-    methods: [
-      {
-        name: '支付宝',
-        url: 'https://cdn.yunyoujun.cn/img/donate/alipay-qrcode.jpg',
-        color: '#00A3EE',
-        icon: 'i-ri-alipay-line',
-      },
-      {
-        name: '微信支付',
-        url: 'https://cdn.yunyoujun.cn/img/donate/wechatpay-qrcode.jpg',
-        color: '#2DC100',
-        icon: 'i-ri-wechat-pay-line',
-      },
-    ],
-  },
-})
-```
-
-你可以通过 `sponsor` 属性控制全局是否开启。
-:::
-
-::: en
 > At the end of each post, show sponsor information.
 
 ```ts [site.config.ts]
@@ -441,7 +279,6 @@ export default defineSiteConfig({
 ```
 
 You can use the `sponsor` property to globally toggle if it's shown.
-:::
 
 ```ts
 interface SponsorOption {
@@ -456,13 +293,8 @@ interface SponsorOption {
 }
 ```
 
-::: zh-CN
-或为某篇文章的 Front Matter 单独设置：
-:::
 
-::: en
 Or you can set for each post using front matter:
-:::
 
 ```md
 ---
@@ -471,28 +303,25 @@ sponsor: false
 ---
 ```
 
-### 阅读统计
+### Reading Statistics
 
-开启阅读统计，将会在每篇文章开头展示阅读统计信息。
+Enable reading statistics to display word count and reading time at the beginning of each post.
 
-> 需要主题进行适配，即展示 `frontmatter` 中的 `wordCount` 和 `readingTime` 字段。
+> Requires theme support, i.e., displaying `wordCount` and `readingTime` fields from `frontmatter`.
 
-- `wordCount`：字数统计
-- `readingTime`：阅读时长（分钟）
-  - 可以设置不同语言的阅读速度，默认 `cn` 为 300 字/分钟，`en` 为 200 字/分钟。
+- `wordCount`: Word count
+- `readingTime`: Reading time (minutes)
+  - You can set reading speed for different languages. Default: `cn` 300 words/min, `en` 200 words/min.
 
 ```ts [site.config.ts]
 import { defineSiteConfig } from 'valaxy'
 
 export default defineSiteConfig({
-  /**
-   * 开启阅读统计
-   */
   statistics: {
     enable: true,
     readTime: {
       /**
-       * 阅读速度
+       * Reading speed
        */
       speed: {
         cn: 300,
@@ -503,25 +332,14 @@ export default defineSiteConfig({
 })
 ```
 
-### 代码块高度限制 {lang="zh-CN"}
 
-### Code Height Limit {lang="en"}
+### Code Height Limit
 
-::: zh-CN
-你可以为每篇文章设置代码块高度限制。
-:::
 
-::: en
 You can set the height limit for each article.
-:::
 
-::: zh-CN
-譬如设置 `codeHeightLimit: 300`，则文章中所有代码块高度都不会超过 300px，并自动折叠。
-:::
 
-::: en
 For example, if you set `codeHeightLimit: 300`, the height of all code blocks in the article will not exceed 300px and will be automatically collapsed.
-:::
 
 ```ts {5}
 import { defineSiteConfig } from 'valaxy'
@@ -532,13 +350,8 @@ export default defineSiteConfig({
 })
 ```
 
-::: zh-CN
-你也可以在文章的 Front Matter 中单独设置：
-:::
 
-::: en
 You can also set it separately in the Front Matter of the article:
-:::
 
 ```md {2}
 ---
@@ -546,25 +359,14 @@ codeHeightLimit: 300
 ---
 ```
 
-::: zh-CN
-示例可参见 [代码块高度限制](/examples/code-height-limit)。
-:::
 
-::: en
 Example can refer to [Code Height Limit](/examples/code-height-limit).
-:::
 
-### 内容加密 {lang="zh-CN"}
 
-### Content Encryption {lang="en"}
+### Content Encryption
 
-::: zh-CN
-首先在 `site.config.ts` 中开启加密
-:::
 
-::: en
 Firstly, enable encryption in `site.config.ts`.
-:::
 
 ```ts {5-7}
 import { defineSiteConfig } from 'valaxy'
@@ -577,72 +379,37 @@ export default defineSiteConfig({
 })
 ```
 
-::: zh-CN
-
-- 加密整篇文章
-:::
-
-::: en
 
 - encrypt the entire article
-:::
 
-::: zh-CN
-在文章的 Front Matter 中设置 `password`：
-:::
 
-::: en
 Set `password` in the Front Matter of the article:
-:::
 
 ```md {2}
 ---
 password: your_password
-password_hint: 自定义密码提示
+password_hint: Custom Password Hint
 ---
 ```
 
-::: zh-CN
-
-- 加密部分内容
-:::
-
-::: en
 
 - encrypt partial content
-:::
 
 ::: tip
 
-<div lang="zh-CN">
-如果在文章的 Front Matter 中设置了 `password`，文章中的部分加密将被忽略。
-</div>
 
-<div lang="en">
 If you set `password` in Front Matter, partial encryption will be ignored.
-</div>
 
 :::
 
-::: zh-CN
-将待加密的内容包裹在 `<!-- valaxy-encrypt-start:your_password --><!-- valaxy-encrypt-end -->` 中。
-:::
 
-::: en
 Wrap content to be encrypted in `<!-- valaxy-encrypt-start:your_password --><!-- valaxy-encrypt-end -->`.
-:::
 
-::: zh-CN
-示例可参见 [部分内容加密](/examples/partial-content-encryption)。
-:::
 
-::: en
 Examples can be found in [Partial Content Encryption](/examples/partial-content-encryption)。
-:::
 
-### 客户端重定向 {lang="zh-CN"}
 
-### Client Redirects {lang="en"}
+### Client Redirects
 
 ```ts
 interface Redirects {
@@ -659,13 +426,8 @@ interface RedirectRule {
 }
 ```
 
-::: zh-CN
-示例：
-:::
 
-::: en
 For example:
-:::
 
 ```ts [site.config.ts]
 export default defineSiteConfig({
@@ -685,21 +447,11 @@ export default defineSiteConfig({
 })
 ```
 
-::: zh-CN
-`/foo`, `/bar`, `/v1/about` 这些路由会被重定向到 `/about`。
-:::
 
-::: en
 `/foo`, `/bar`, `/v1/about` these routes will be redirected to `/about`。
-:::
 
-::: zh-CN
-你也可以在 Front Matter 中配置：
-:::
 
-::: en
 You can also set it in the Front Matter:
-:::
 
 ```md
 <!-- pages/posts/redirect.md -->
@@ -717,44 +469,20 @@ from: /v1/redirect
 ---
 ```
 
-::: zh-CN
-`/redirect/old1`, `/redirect/old2`, `/v1/redirect` 这些路由会被重定向到 `/posts/redirect`。
-:::
 
-::: en
 `/redirect/old1`, `/redirect/old2`, `/v1/redirect` these routes will be redirected to `/posts/redirect`。
-:::
 
 ::: tip
 
-<div lang="zh-CN">
-在 SSG 构建时，如果 useVueRouter 为 false，则会为每一个源路由生成一个 html 文件
-</div>
 
-<div lang="en">
 When building SSG, if useVueRouter is false, an html file will be generated for each original route
-</div>
 
 :::
 
-### 图片预览（Medium Zoom） {lang="zh-CN"}
 
-### Image Preview (Medium Zoom) {lang="en"}
+### Image Preview (Medium Zoom)
 
-::: zh-CN
-Valaxy 内置了 [medium-zoom](https://github.com/francoischalifour/medium-zoom) 进行图片预览，默认关闭。
 
-> [Medium Zoom Demo](https://medium-zoom.francoischalifour.com/)
-
-- mediumZoom
-  - `enable`: 是否开启
-  - `selector`: 可自定义传入选择器
-  - `options`: 与 [options | medium-zoom](https://github.com/francoischalifour/medium-zoom#options) 一致
-
-譬如开启 Medium Zoom：
-:::
-
-::: en
 Valaxy has built-in [medium-zoom](https://github.com/francoischalifour/medium-zoom) to preview the pictures, which is disabled by default.
 
 > [Medium Zoom Demo](https://medium-zoom.francoischalifour.com/)
@@ -764,7 +492,6 @@ Valaxy has built-in [medium-zoom](https://github.com/francoischalifour/medium-zo
   - `selector`: Custom CSS selector
   - `options`: Refer to [options | medium-zoom](https://github.com/francoischalifour/medium-zoom#options)
 
-:::
 
 ```ts [site.config.ts]
 import { defineSiteConfig } from 'valaxy'
@@ -774,13 +501,8 @@ export default defineSiteConfig({
 })
 ```
 
-::: zh-CN
-除此之外，你也可以单独控制是否在某篇文章中开启。
-:::
 
-::: en
 In addition, you can also enable it in a certain article independently.
-:::
 
 ```md
 ---
@@ -789,40 +511,28 @@ medium_zoom: true
 ---
 ```
 
-### 懒加载 Vanilla Lazyload {lang="zh-CN"}
 
-### Lazyload Vanilla Lazyload {lang="en"}
+### Lazyload Vanilla Lazyload
 
-::: zh-CN
 
-Valaxy 内置了 [vanilla-lazyload](https://github.com/verlok/vanilla-lazyload)。
-
-`vanillaLazyload` 默认不开启。
-因为 Valaxy 本身会为所有的图片添加 `loading="lazy"`，它是浏览器的特性，但如果你希望得到更广泛的兼容，你可以手动开启 `vanillaLazyload`。
-
-:::
-
-::: en
-
-Valaxy has built-in [vanilla-lazyload](https://github.com/verlok/vanilla-lazyload)。
+Valaxy has built-in [vanilla-lazyload](https://github.com/verlok/vanilla-lazyload).
 
 `vanillaLazyload` is disabled by default.
 Because Valaxy itself will add `loading="lazy"` to all images, which is a browser feature, but if you want to get more extensive compatibility, you can manually enable it.
 
-:::
 
 ```ts
 export default defineSiteConfig({
   vanillaLazyload: {
-    // 默认不开启
+    // Disabled by default
     enable: true,
   }
 })
 ```
 
-### 更多配置
+### More Configurations
 
-> 更多详细配置可参见 [types/config.ts](https://github.com/YunYouJun/valaxy/blob/main/packages/valaxy/types/config.ts)。
+> For more details, see [types/config.ts](https://github.com/YunYouJun/valaxy/blob/main/packages/valaxy/types/config.ts).
 
 ::: details packages/valaxy/types/config.ts SiteConfig
 
@@ -830,18 +540,14 @@ export default defineSiteConfig({
 
 :::
 
-## 主题配置 {lang="zh-CN"}
 
-## Theme Config {lang="en"}
+## Theme Config
 
-::: zh-CN
-参照 [使用主题](/themes/use) 及您所使用的主题文档进行配置。
-:::
 
-::: en
 Please refer to [Using Themes](/themes/use) and the theme you are using to configure it.
-:::
 
-## 扩展配置
+> [Theme Yun Config](/themes/yun)
 
-更多高阶配置请参见 [扩展配置](/guide/config/extend)。
+## Extended Config
+
+For more advanced configurations, see [Extended Config](/guide/config/extend).

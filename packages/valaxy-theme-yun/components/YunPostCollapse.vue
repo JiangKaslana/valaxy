@@ -41,7 +41,7 @@ const sortedYears = computed(() => {
   const y = years.value
   const arr = y.sort((a, b) => b - a)
   // avoid mutating the original array
-  return isDesc.value ? arr : [...arr].reverse()
+  return isDesc.value ? arr : arr.toReversed()
 })
 </script>
 
@@ -80,7 +80,7 @@ const sortedYears = computed(() => {
 <style lang="scss">
 .post-collapse {
   .collection-title {
-    border-bottom: 2px solid rgba(var(--va-c-primary-rgb), 0.6);
+    border-bottom: 2px solid rgb(var(--va-c-primary-rgb), 0.6);
 
     &::before {
       content: '';
@@ -88,7 +88,7 @@ const sortedYears = computed(() => {
       top: 50%;
       width: 2px;
       height: 50%;
-      background: rgba(var(--va-c-primary-rgb), 0.3);
+      background: rgb(var(--va-c-primary-rgb), 0.3);
     }
 
     .archive-year {

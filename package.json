@@ -1,9 +1,9 @@
 {
   "name": "@valaxyjs/monorepo",
   "type": "module",
-  "version": "0.26.13",
+  "version": "1.0.0-rc.4",
   "private": true,
-  "packageManager": "pnpm@10.28.1",
+  "packageManager": "pnpm@10.34.4",
   "description": "📄 Vite & Vue powered static blog generator.",
   "author": {
     "email": "me@yunyoujun.cn",
@@ -18,7 +18,7 @@
     "blog"
   ],
   "engines": {
-    "node": "^18.0.0 || >=20.0.0"
+    "node": ">=22.12.0"
   },
   "scripts": {
     "api:dev": "pnpm -C api run dev",
@@ -32,12 +32,13 @@
     "build:demo": "pnpm -C demo/yun run build",
     "build:demo:ssg": "pnpm -C demo/yun run build:ssg",
     "build:cf:docs": "tsx scripts/build-cf-docs.ts",
-    "build:docs": "npm run docs:build",
+    "build:docs": "pnpm run docs:build",
     "build:devtools": "pnpm -C packages/devtools run build",
     "clean": "pnpm -r --filter \"./packages/**\" run clean",
     "cli:debug": "tsx packages/valaxy/node/cli/index.ts debug",
     "ci": "pnpm run build && pnpm build:create-valaxy && node packages/create-valaxy/dist/index.mjs -y",
     "ci:publish": "pnpm -r publish --access public --no-git-checks",
+    "create:start": "pnpm -C packages/create-valaxy run start",
     "custom": "pnpm -C demo/custom run dev",
     "demo": "pnpm run demo:yun",
     "demo:build": "pnpm -C demo/yun run build",
@@ -49,7 +50,7 @@
     "devtools": "pnpm -C packages/devtools run dev",
     "devtools:client": "pnpm -C packages/devtools run dev:client",
     "docs": "pnpm -C docs run dev",
-    "docs:dev": "pnpm -C docs run dev",
+    "docs:dev": "pnpm -C docs run dev:debug",
     "docs:build": "pnpm -C docs run build",
     "docs:serve": "pnpm -C docs run serve",
     "docs:vitepress": "pnpm -C docs run vitepress:dev",
@@ -60,12 +61,13 @@
     "lint": "eslint .",
     "stylelint": "stylelint --fix \"**/*.{scss,vue}\"",
     "preinstall": "npx only-allow pnpm",
-    "prepublishOnly": "npm run build",
+    "prepublishOnly": "pnpm run build",
     "release": "tsx scripts/release.ts",
     "typecheck": "vue-tsc --noEmit --skipLibCheck",
     "test": "vitest",
-    "test:e2e": "npm run e2e",
-    "test:space": "export NODE_OPTIONS='--inspect --max-old-space-size=2048' && pnpm -C demo/yun run build:ssg",
+    "test:e2e": "pnpm run e2e",
+    "test:space": "cross-env NODE_OPTIONS=--max-old-space-size=2304 pnpm -C demo/yun run build:ssg",
+    "test:space:docs": "cross-env NODE_OPTIONS=--max-old-space-size=2048 pnpm -C docs run build",
     "prepare": "husky install"
   },
   "dependencies": {
@@ -109,7 +111,6 @@
     "tsx": "catalog:",
     "typescript": "catalog:build",
     "unbuild": "catalog:build",
-    "vite-node": "catalog:",
     "vitest": "catalog:",
     "vue-tsc": "catalog:",
     "zx": "catalog:build"

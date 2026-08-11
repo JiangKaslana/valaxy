@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (https://claude.com/code) when workin
 
 ## Project Overview
 
-Valaxy is a Next Generation Static Blog Framework built with Vue 3, Vite 5, and pnpm workspaces. It's a monorepo containing the core framework, themes, addons, documentation, and demo sites.
+Valaxy is a Next Generation Static Blog Framework built with Vue 3, Vite 8 (Rolldown), and pnpm workspaces. It's a monorepo containing the core framework, themes, addons, documentation, and demo sites.
 
 **Key Links:**
 - Documentation: https://valaxy.site
@@ -107,7 +107,7 @@ pnpm devtools
 
 ### Monorepo Structure
 
-```
+```txt
 valaxy/
 ├── packages/
 │   ├── @valaxyjs/utils/      # Shared utilities
@@ -135,7 +135,7 @@ The core is split into **Node** (build-time) and **Client** (runtime):
 - `plugins/` - Vite plugin orchestration
   - `preset.ts` - Main plugin composition
   - `markdown/` - Markdown-it processing pipeline
-  - `vueRouter.ts` - File-based routing via unplugin-vue-router
+  - `vueRouter.ts` - File-based routing via vue-router/vite
   - `valaxy.ts` - Virtual module generation
   - `unocss.ts` - UnoCSS configuration
 - `modules/` - Built-in features (RSS, Fuse search)
@@ -164,7 +164,7 @@ The core is split into **Node** (build-time) and **Client** (runtime):
 
 **Roots System:**
 File resolution follows priority order:
-```
+```txt
 roots = [clientRoot, themeRoot, ...addonRoots, userRoot]
 ```
 User content overrides theme overrides core.
@@ -177,7 +177,7 @@ Generated at build time via Vite plugins:
 - `virtual:valaxy-addons` - Addon registration
 
 **Routing:**
-- File-based via `unplugin-vue-router`
+- File-based via `vue-router/vite`
 - `.vue` and `.md` files in `pages/` directory
 - Frontmatter parsed from `.md` and merged into route meta
 - Layouts auto-assigned by path patterns
@@ -191,17 +191,19 @@ Uses `markdown-it` with custom plugins:
 5. Output cached for route generation
 
 **SSG (Static Site Generation):**
-- Powered by `vite-ssg`
+- Single built-in Valaxy SSG engine (Vue SSR + pure string rendering, no JSDOM). The legacy JSDOM-based `vite-ssg` engine was **removed in v1.0** (broken under pnpm, see #706); there is no `--ssg-engine` flag.
+- Flash-of-unstyled-content handled by the FOUC guard (not Critical CSS inlining)
 - Filters draft posts in production
 - Supports pagination
 - Generates sitemap and redirects
+- **Minimum heap: ~4 GB** (`--max-old-space-size=4096`). Vite 8 (Rolldown) uses more memory during chunk generation; the SSG engine auto-respawns with sufficient heap.
 
 ## Theme Development
 
 Themes are self-contained npm packages that extend Valaxy.
 
 **Theme Structure:**
-```
+```txt
 valaxy-theme-{name}/
 ├── client/           # Client-side code
 ├── node/             # Node-side config
@@ -227,7 +229,7 @@ Reference: [valaxy-theme-starter](https://github.com/YunYouJun/valaxy-theme-star
 Addons are pluggable packages for additional features.
 
 **Addon Structure:**
-```
+```txt
 valaxy-addon-{name}/
 ├── client/           # Vue components/stores
 ├── node/             # Node-side setup
@@ -270,7 +272,7 @@ The dev server supports hot reload for:
 - Styles
 
 ### Node Version
-Requires Node.js 18+ or 20+
+Requires Node.js >= 22.12 (Vite 8 + unplugin-vue-markdown@32; Node 18/20 dropped in v1.0)
 
 ## Testing Strategy
 

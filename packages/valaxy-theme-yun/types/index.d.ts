@@ -41,6 +41,19 @@ export namespace YunTheme {
   }
 }
 
+export interface EditLink {
+  /**
+   * @en Edit link pattern. Use `:path` as placeholder.
+   * @zh 编辑链接模式，使用 `:path` 作为路径占位符
+   * @example 'https://github.com/user/repo/edit/main/:path'
+   */
+  pattern: string
+  /**
+   * @en Custom label text
+   */
+  text?: string
+}
+
 export interface PageProps {
   name: string
   /**
@@ -245,6 +258,18 @@ export interface ThemeConfig extends DefaultTheme.Config {
        * 苏ICP备xxxxxxxx号
        */
       icp: string
+      /**
+       * @en Custom ICP link, default is https://beian.miit.gov.cn/
+       * @zh 自定义 ICP 备案链接，默认为 https://beian.miit.gov.cn/
+       * @default 'https://beian.miit.gov.cn/'
+       */
+      icpLink?: string
+      /**
+       * 公安网备案号
+       * 苏公网安备xxxxxxxx号
+       * https://beian.mps.gov.cn/
+       */
+      police?: string
     }
   }>
 
@@ -271,6 +296,12 @@ export interface ThemeConfig extends DefaultTheme.Config {
       icon: string
     }
   }
+
+  /**
+   * @en Edit link configuration for "Open in GitHub" or similar services
+   * @zh 编辑链接配置，用于「在 GitHub 中打开」等功能
+   */
+  editLink?: EditLink
 }
 
 export type UserThemeConfig = Partial<ThemeConfig>

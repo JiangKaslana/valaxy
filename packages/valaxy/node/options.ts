@@ -8,7 +8,7 @@ import _debug from 'debug'
 import fg from 'fast-glob'
 import fs from 'fs-extra'
 import { resolve } from 'pathe'
-import { getRollupOptions } from './build/bundle'
+import { getRolldownOutputOptions } from './build/bundle'
 import {
   defaultValaxyConfig,
   mergeValaxyConfig,
@@ -60,12 +60,40 @@ export async function processValaxyOptions(valaxyOptions: ResolvedValaxyOptions,
   const { clientRoot, themeRoot, userRoot } = valaxyOptions
 
   // resolve addon valaxyConfig
+  const parseAddonsTimer = countPerformanceTime()
   const addons = await parseAddons(valaxyConfig.addons || [], valaxyOptions.userRoot)
+  consola.debug(`  ├─ parseAddons: ${parseAddonsTimer()}`)
+
+  const resolveAddonsTimer = countPerformanceTime()
   const addonsValaxyConfig = await resolveAddonsConfig(addons, valaxyOptions)
+  consola.debug(`  ├─ resolveAddonsConfig: ${resolveAddonsTimer()}`)
+
+  const mergeTimer = countPerformanceTime()
   valaxyConfig = mergeValaxyConfig(valaxyConfig, addonsValaxyConfig)
 
-  const rollupOptions = getRollupOptions(valaxyOptions)
-  defaultValaxyConfig.vite!.build!.rollupOptions = rollupOptions
+  const rolldownOutputOptions = getRolldownOutputOptions(valaxyOptions)
+  consola.debug(`  ├─ mergeValaxyConfig + getRolldownOutputOptions: ${mergeTimer()}`)
+
+  // Set rolldownOptions with codeSplitting (Vite 8 / Rolldown)
+  const buildConfig = defaultValaxyConfig.vite!.build ??= {}
+  buildConfig.rolldownOptions = {
+    ...buildConfig.rolldownOptions,
+    output: rolldownOutputOptions,
+    // Silence IMPORT_IS_UNDEFINED warnings from the empty-addon fallback.
+    // When a theme imports `valaxy-addon-*` that the user hasn't installed,
+    // the alias points to client/addons/index.ts (an empty stub). Theme
+    // components guard the access at runtime with isEmptyAddon(), so the
+    // static "import will be undefined" warning is a false positive.
+    onLog(level, log, defaultHandler) {
+      if (
+        log.code === 'IMPORT_IS_UNDEFINED'
+        && /[/\\]client[/\\]addons[/\\]index\.ts/.test(log.message ?? '')
+      ) {
+        return
+      }
+      defaultHandler(level, log)
+    },
+  }
 
   const config = replaceArrMerge(valaxyConfig, defaultValaxyConfig)
   valaxyOptions.config = {
@@ -91,10 +119,17 @@ export async function processValaxyOptions(valaxyOptions: ResolvedValaxyOptions,
   valaxyOptions.roots = uniq([clientRoot, themeRoot, ...addonRoots, userRoot])
 
   // when addon be used, remove it from external
-  const external = valaxyOptions.config.vite?.build?.rollupOptions?.external as string[] || []
-  valaxyOptions.config.vite!.build!.rollupOptions!.external = external.filter(name => !addonNames.includes(name))
+  const resolvedBuild = valaxyOptions.config.vite!.build ??= {}
+  const rawExternal = resolvedBuild.rolldownOptions?.external ?? resolvedBuild.rollupOptions?.external ?? []
+  const external = Array.isArray(rawExternal) ? rawExternal.filter((e): e is string => typeof e === 'string') : []
+  resolvedBuild.rolldownOptions = {
+    ...resolvedBuild.rolldownOptions,
+    external: external.filter(name => !addonNames.includes(name)),
+  }
 
+  const siteConfigTimer = countPerformanceTime()
   await processSiteConfig(valaxyOptions)
+  consola.debug(`  └─ processSiteConfig: ${siteConfigTimer()}`)
 
   return valaxyOptions
 }
@@ -109,6 +144,7 @@ export async function resolveOptions(
   const userRoot = resolve(options.userRoot || process.cwd())
 
   consola.start(`Resolve ${colors.magenta('valaxy')} config ...`)
+  const configTimer = countPerformanceTime()
   const [resolvedValaxy, resolvedSite, resolvedTheme, pages] = await Promise.all([
     resolveValaxyConfig(options),
     resolveSiteConfig(options.userRoot),
@@ -120,6 +156,7 @@ export async function resolveOptions(
       ignore: ['**/node_modules'],
     }),
   ])
+  consola.debug(`Parallel config resolve: ${configTimer()}`)
 
   let { config: userValaxyConfig, configFile, theme } = resolvedValaxy
 
@@ -132,7 +169,7 @@ export async function resolveOptions(
   const redirects = collectRedirects(siteConfig.redirects?.rules)
 
   // merge with valaxy
-  userValaxyConfig = replaceArrMerge<ValaxyNodeConfig, any>({ siteConfig } as ValaxyNodeConfig, { themeConfig }, userValaxyConfig)
+  userValaxyConfig = replaceArrMerge({ siteConfig }, { themeConfig }, userValaxyConfig) as ValaxyNodeConfig
 
   // pages
   // Important: fast-glob doesn't guarantee order of the returned files.
@@ -141,6 +178,13 @@ export async function resolveOptions(
   // order in shared chunks which in turns invalidates the hash of every chunk!
   // JavaScript built-in sort() is mandated to be stable as of ES2019 and
   // supported in Node 12+, which is required by Vite.
+
+  // Include content loader pages from cache directory
+  const contentDir = resolve(userRoot, '.valaxy', 'content', 'pages')
+  if (await fs.pathExists(contentDir)) {
+    const contentPages = await fg(['**.md'], { cwd: contentDir, ignore: ['**/node_modules'] })
+    pages.push(...contentPages)
+  }
 
   let valaxyOptions: ResolvedValaxyOptions = {
     mode,
@@ -179,7 +223,9 @@ export async function resolveOptions(
   const themeValaxyConfig = await resolveThemeValaxyConfig(valaxyOptions)
   const valaxyConfig = mergeValaxyConfig(userValaxyConfig, themeValaxyConfig)
 
+  const processTimer = countPerformanceTime()
   valaxyOptions = await processValaxyOptions(valaxyOptions, valaxyConfig)
+  consola.debug(`processValaxyOptions: ${processTimer()}`)
 
   // ensure .valaxy folder to store temp files, like d.ts
   fs.ensureDirSync(valaxyOptions.tempDir)

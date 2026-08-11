@@ -1,41 +1,17 @@
 ---
-date: ''
-title: 关于
-updated: '2026-02-22T20:12:24.392+08:00'
----
-Hello，我是硝基，这是我的[博客]([https://](https://kianakaslana.top/))
-
-这是一个功能强大、启动迅速、使用便捷的静态博客框架。
-
-More info see [Valaxy](https://github.com/YunYouJun/valaxy).
-
+title: 关于我
+date: 2026-08-11
+updated: 2026-08-11
 ---
 
-[**「Steins;Gate」**](https://zh.wikipedia.org/wiki/%E5%91%BD%E9%81%8B%E7%9F%B3%E4%B9%8B%E9%96%80)的世界性变动率是：<span font="mono">1.048596</span>。
+# 你好，我是 JiangKaslana
 
-Valaxy 的默认启动端口号截取自其中小数点后第二位开始的 <span font="mono">4859</span>。
+这里是我的个人博客，用来记录技术实践、项目进展，以及生活中的一些思考。
 
-**「無限遠点のアークライト」**直译为**无限远点的弧光灯**，在翻译时[维基百科](https://zh.wikipedia.org/wiki/%E5%91%BD%E9%81%8B%E7%9F%B3%E4%B9%8B%E9%96%80)上显示为 **「无限远点的牵牛星」**，而[科学 ADV 中文百科](https://sci-adv.cc/wiki/%E5%B9%BF%E6%92%AD%E5%89%A7:%E6%97%A0%E9%99%90%E8%BF%9C%E7%82%B9%E7%9A%84%E5%BC%A7%E5%85%89%E7%81%AF)则译为 **「无限远点的织女星」**。
+## 这个博客会写什么
 
-命运石之门 0 中，真有理将凶真打回 **「命运石之门」** 世界线的行动称之为 **「织女星计划」**。
-而 25 年后，凶真寻找真有理的计划则为 **「牵牛星计划」**。
+- 开发过程中的问题、方案与复盘
+- 开源项目和工具的使用记录
+- 学习笔记与不定期的生活随笔
 
-因此我决定将 Valaxy 开发计划称之为 **「银河计划 - Galaxy Plan」**。
-
----
-
-## 特性
-
-- 现代博客框架，一些新的尝试
-- Vue & Vite 热加载开发体验
-- 动态预览
-- 一键使用
-- ...
-
-## [Why Valaxy?](https://valaxy.site/guide/why)
-
-## [Sponsors](https://www.yunyoujun.cn/sponsors/)
-
-❤️ 感谢以下赞助者们的支持！
-
-<ValaxySponsors />
+你可以从[文章列表](/posts/)开始阅读，也可以在 [GitHub](https://github.com/JiangKaslana) 查看我的项目。

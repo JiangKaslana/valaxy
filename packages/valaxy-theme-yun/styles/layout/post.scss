@@ -9,13 +9,31 @@
   position: relative;
   max-width: var(--yun-post-card-max-width);
 
-  @include mobile {
+  .post-card-cover {
+    width: 40%;
+    height: 13.5rem; // h-54
+    flex-shrink: 0;
+  }
+
+  .post-card-body-with-cover {
+    height: 13.5rem; // h-54
+  }
+
+  // Use md breakpoint (768px) instead of mobile (640px)
+  // because 640~768px screens are still too narrow for side-by-side layout
+  @media screen and (width <= 768px) {
     .post-card-info {
       flex-direction: column;
     }
 
-    img {
+    .post-card-cover {
       width: 100%;
+      height: auto;
+      max-height: 12rem;
+    }
+
+    .post-card-body-with-cover {
+      height: auto;
     }
   }
 }
@@ -40,7 +58,7 @@
     height: 10px;
     opacity: 0;
     border: 2px solid;
-    transition: 0.3s;
+    transition: var(--va-transition-duration);
     transition-timing-function: cubic-bezier(0.17, 0.67, 0.05, 1.29);
   }
 
@@ -67,13 +85,19 @@
 
 .post-link-btn,
 .markdown-body .post-link-btn {
-  background-color: #111;
+  background-color: var(--va-c-primary, #111);
   line-height: 1.2;
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 1.2rem;
   color: white;
-  font-size: 14px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
   margin-top: -0.2rem;
-  transition: box-shadow var(--va-transition-duration);
+  transition: box-shadow var(--va-transition-duration), transform var(--va-transition-duration-fast);
+
+  &:hover {
+    transform: translateY(-1px);
+  }
 
   &::before {
     content: none;
@@ -85,11 +109,16 @@
   color: var(--va-c-text);
 }
 
+.post-tags {
+  --yun-tag-hover-color: white;
+}
+
 .post-tag {
   white-space: nowrap;
   color: var(--yun-tag-color);
+  transition: color var(--va-transition-duration-fast);
 
   &:hover {
-    color: var(--va-c-primary);
+    color: var(--yun-tag-hover-color, var(--va-c-primary));
   }
 }

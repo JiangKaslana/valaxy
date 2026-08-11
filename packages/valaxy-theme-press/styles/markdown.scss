@@ -20,7 +20,7 @@
     display: inline-block;
     text-decoration: none;
     border-bottom: 1px solid transparent;
-    transition: all 0.4s;
+    transition: all var(--va-transition-duration-moderate);
   }
 
   code:not(pre > code) {
@@ -49,7 +49,7 @@
   .markdown-body {
     a {
       text-decoration: inherit;
-      transition: all 0.4s;
+      transition: all var(--va-transition-duration-moderate);
 
       &:hover {
         text-decoration: underline;
@@ -61,14 +61,24 @@
   .va-git-log-contributor {
     padding-left: 0;
     padding-top: 0;
+    margin-top: 0;
+    margin-bottom: 0;
 
     li,
     li+li {
       margin-top: 0;
+      margin-bottom: 0;
     }
 
     li {
       margin-right: 0.5rem;
+    }
+
+    .va-contributor-avatar img {
+      width: 32px;
+      height: 32px;
+      margin: 0;
+      object-fit: cover;
     }
   }
 }

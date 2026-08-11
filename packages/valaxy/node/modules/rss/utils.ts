@@ -13,7 +13,6 @@ import fs from 'fs-extra'
 import matter from 'gray-matter'
 import MarkdownIt from 'markdown-it'
 
-import ora from 'ora'
 import { getBorderCharacters, table } from 'table'
 import { tObject } from '../../../shared'
 import { matterOptions } from '../../plugins/markdown/transform/matter'
@@ -82,8 +81,7 @@ async function extractImagePathsFromHTML(htmlPath: string, DOMAIN: string): Prom
  * @param options
  */
 export async function build(options: ResolvedValaxyOptions) {
-  // consola.info(`${yellow('RSS Generating ...')}`)
-  const s = ora('RSS Generating ...').start()
+  consola.start('RSS Generating ...')
 
   const { config } = options
   const siteConfig = config.siteConfig
@@ -146,7 +144,7 @@ export async function build(options: ResolvedValaxyOptions) {
     : `${DOMAIN}${ensurePrefix('/', authorAvatar)}`
   feedOptions.favicon = `${DOMAIN}${siteConfig.feed?.favicon || siteConfig.favicon}`
 
-  s.succeed('RSS Generated.')
+  consola.success('RSS Generated.')
   await writeFeed(feedOptions, posts, options, feedNameMap)
 }
 
@@ -170,23 +168,17 @@ export async function getPosts(params: {
     const { data, content, excerpt } = matter(raw, matterOptions)
     return { data, content, excerpt, path: i }
   })
-  const draftPosts: {
-    data: Record<string, any>
-    content: string
-    excerpt?: string
-    path: string
-  }[] = []
   const rawPosts = (await Promise.all(readFilePromises))
   // filter
+  const draftPosts: string[] = []
   const filteredPosts = rawPosts.filter((p) => {
     const { data } = p
     // skip encrypt post
     if (data.password)
       return false
-      // skip draft post
+    // skip draft post
     if (data.draft) {
-      // TODO: console draftPosts
-      draftPosts.push(p)
+      draftPosts.push(p.path)
       return false
     }
     // skip hidden post
@@ -194,6 +186,11 @@ export async function getPosts(params: {
       return false
     return true
   })
+  if (draftPosts.length) {
+    consola.warn(`[rss] Skipped ${colors.yellow(String(draftPosts.length))} draft post(s):\n${
+      draftPosts.map(p => `  ${colors.dim('-')} ${colors.dim(p)}`).join('\n')
+    }`)
+  }
 
   // returned posts
   const posts: ExtendedItem[] = []
@@ -205,9 +202,6 @@ export async function getPosts(params: {
       if (!data.updated)
         data.updated = await getUpdatedTime(path)
     }
-
-    // todo i18n
-
     // render excerpt
     // default excerpt content length: 100
     const fullText = options.config.modules.rss.fullText

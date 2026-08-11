@@ -1,7 +1,9 @@
 import type { ValaxyAddon } from '../../types'
 import type { ResolvedValaxyOptions, ValaxyAddonResolver, ValaxyNodeConfig } from '../types'
 import path from 'node:path'
+import { consola } from 'consola'
 import fs from 'fs-extra'
+import { countPerformanceTime } from '../utils/performance'
 import { mergeValaxyConfig, resolveValaxyConfigFromRoot } from './valaxy'
 
 export function defineValaxyAddon<AddonOptions = object>(
@@ -15,19 +17,31 @@ export const defineAddon = defineValaxyAddon
 
 export async function resolveAddonsConfig(addons: ValaxyAddonResolver[], options: ResolvedValaxyOptions) {
   let valaxyConfig: ValaxyNodeConfig = {} as ValaxyNodeConfig
-  for (const addon of addons) {
-    // unconfig get node_modules/valaxy-addon-xxx/valaxy.config.ts(not exist) but get userRoot/valaxy.config.ts
-    // so we need to check if valaxy.config.ts exist
-    const addonConfigPath = path.resolve(addon.root, 'valaxy.config.ts')
-    if (!await fs.exists(addonConfigPath))
-      continue
 
-    const { config, configFile } = await resolveValaxyConfigFromRoot(addon.root, options)
-    if (!config)
-      continue
+  // Resolve all addon configs in parallel for faster startup
+  const results = await Promise.all(
+    addons.map(async (addon) => {
+      const addonTimer = countPerformanceTime()
+      const addonConfigPath = path.resolve(addon.root, 'valaxy.config.ts')
+      if (!await fs.exists(addonConfigPath))
+        return null
 
-    addon.configFile = configFile
-    valaxyConfig = mergeValaxyConfig(config, valaxyConfig)
+      const { config, configFile } = await resolveValaxyConfigFromRoot(addon.root, options)
+      if (!config)
+        return null
+
+      consola.debug(`    resolveAddonConfig(${addon.name}): ${addonTimer()}`)
+      return { addon, config, configFile }
+    }),
+  )
+
+  // Merge sequentially to preserve deterministic order
+  for (const result of results) {
+    if (!result)
+      continue
+    result.addon.configFile = result.configFile
+    valaxyConfig = mergeValaxyConfig(result.config, valaxyConfig)
   }
+
   return valaxyConfig
 }

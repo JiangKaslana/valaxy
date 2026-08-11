@@ -1,19 +1,26 @@
 {
   "name": "create-valaxy",
   "type": "module",
-  "version": "0.26.13",
+  "version": "1.0.0-rc.4",
   "description": "Create Starter Template for Valaxy",
   "author": {
     "email": "me@yunyoujun.cn",
     "name": "YunYouJun",
     "url": "https://www.yunyoujun.cn"
   },
+  "license": "MIT",
   "funding": "https://github.com/sponsors/YunYouJun",
   "homepage": "https://valaxy.site",
   "repository": {
     "type": "git",
-    "url": "https://github.com/YunYouJun/valaxy/tree/main/packages/create-valaxy"
+    "url": "git+https://github.com/YunYouJun/valaxy.git",
+    "directory": "packages/create-valaxy"
   },
+  "keywords": [
+    "valaxy",
+    "create-valaxy",
+    "scaffolding"
+  ],
   "main": "bin/index.mjs",
   "bin": {
     "create-valaxy": "bin/index.mjs"
@@ -24,7 +31,7 @@
     "template-*/**/*"
   ],
   "engines": {
-    "node": "^18.0.0 || >=20.0.0"
+    "node": ">=22.12.0"
   },
   "scripts": {
     "clean": "rimraf dist",

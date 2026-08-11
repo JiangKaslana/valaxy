@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { GirlType } from '../types'
-import { useMotion } from '@vueuse/motion'
-import { ref } from 'vue'
+import { yunSpringVariants } from '../composables/animation'
 import { onImgError } from '../utils'
 
 const props = defineProps<{
@@ -9,27 +8,11 @@ const props = defineProps<{
   girl: GirlType
 }>()
 
-const itemRef = ref()
-useMotion(itemRef, {
-  initial: {
-    opacity: 0,
-    translateY: 40,
-  },
-  enter: {
-    opacity: 1,
-    translateY: 0,
-    transition: {
-      type: 'spring',
-      duration: 400,
-      damping: 8,
-      delay: props.i * 50,
-    },
-  },
-})
+const motionVariants = yunSpringVariants({ i: props.i })
 </script>
 
 <template>
-  <li ref="itemRef" class="girl-item">
+  <li v-motion="motionVariants" class="girl-item">
     <a
       class="girl-item-link"
       :href="girl.url || `https://zh.moegirl.org/${girl.name}`"
@@ -68,7 +51,7 @@ useMotion(itemRef, {
       padding: 0.2rem;
       background-color: #fff;
       box-shadow: 0 0 1rem rgb(0 0 0 / 0.12);
-      transition: 0.5s;
+      transition: var(--va-transition-duration-moderate);
 
       &:hover {
         box-shadow: 0 0 2rem rgb(0 0 0 / 0.12);

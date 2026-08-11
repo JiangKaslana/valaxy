@@ -62,6 +62,12 @@ export const defaultSiteConfig: SiteConfig = {
     enable: false,
   },
 
+  excerpt: {
+    type: 'html',
+    auto: false,
+    length: 200,
+  },
+
   frontmatter: {
     time_warning: 180 * 24 * 60 * 60 * 1000,
   },
@@ -105,6 +111,14 @@ export const defaultSiteConfig: SiteConfig = {
   redirects: {
     useVueRouter: true,
     rules: [],
+  },
+
+  llms: {
+    enable: false,
+    fullText: true,
+    files: true,
+    prompt: '',
+    include: ['posts/**/*.md'],
   },
 }
 

@@ -25,7 +25,7 @@ const appStore = useAppStore()
   border-radius: 11px;
   border: 1px solid var(--pr-switch-divider);
   background-color: var(--pr-switch-bg);
-  transition: border-color 0.25s, background-color 0.25s;
+  transition: border-color var(--va-transition-duration), background-color var(--va-transition-duration);
 }
 
 .switch:hover {
@@ -40,8 +40,8 @@ const appStore = useAppStore()
   height: 18px;
   border-radius: 50%;
   background-color: #fff;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.06);
-  transition: background-color 0.25s, transform 0.25s;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.04), 0 1px 2px rgb(0 0 0 / 0.06);
+  transition: background-color var(--va-transition-duration), transform var(--va-transition-duration);
 }
 
 .dark .check {
@@ -60,11 +60,11 @@ const appStore = useAppStore()
 .icon {
   width: 12px;
   height: 12px;
-  background-color: rgba(60, 60, 60, 0.7);
+  background-color: rgb(60 60 60 / 0.7);
 }
 
 .dark .icon {
-  background-color: rgba(255, 255, 255, 0.87);
+  background-color: rgb(255 255 255 / 0.87);
 }
 
 .dark .switch-appearance :deep(.check) {

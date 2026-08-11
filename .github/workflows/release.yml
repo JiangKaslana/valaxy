@@ -13,7 +13,7 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
@@ -24,7 +24,7 @@ jobs:
 
       # after pnpm
       - name: Use Node.js LTS
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: 'lts/*'
           registry-url: https://registry.npmjs.org/
@@ -32,10 +32,21 @@ jobs:
 
       - run: pnpm run build:all
       # https://docs.github.com/en/actions/publishing-packages/publishing-nodejs-packages
-      - run: npm run ci:publish
+      # v1 release candidates are the default install channel while v1 is being
+      # finalized. Other prereleases continue to use `next`.
+      - name: Publish to npm
+        run: |
+          if [[ "$GITHUB_REF_NAME" == v1.0.0-rc.* ]]; then
+            pnpm -r publish --access public --no-git-checks --tag latest
+          elif [[ "$GITHUB_REF_NAME" == *-* ]]; then
+            pnpm -r publish --access public --no-git-checks --tag next
+          else
+            pnpm -r publish --access public --no-git-checks
+          fi
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
           NPM_CONFIG_PROVENANCE: true
+        continue-on-error: true
 
       - run: npx changelogithub
         env:

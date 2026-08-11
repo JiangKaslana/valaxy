@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "ESNext",
     "jsx": "preserve",
-    "lib": ["DOM", "ESNext"],
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "baseUrl": ".",
     "module": "ESNext",
     "moduleResolution": "Bundler",
@@ -22,11 +22,10 @@
     },
     "resolveJsonModule": true,
     "types": [
-      "unplugin-vue-router/client",
       "vitest",
       "vite/client",
       "valaxy/client",
-      "vite-plugin-vue-layouts/client",
+      "vite-plugin-vue-layouts-next/client",
       "@intlify/unplugin-vue-i18n/messages",
       "@types/wicg-file-system-access"
     ],

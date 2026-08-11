@@ -1,5 +1,9 @@
+import fs from 'node:fs'
 import { expect, test } from '@playwright/test'
 import { env } from '../env'
+
+// Skip all tests when valaxy-blog directory is not available
+const skipAll = !fs.existsSync('valaxy-blog')
 
 test.use({
   baseURL: env['create-valaxy'],
@@ -7,6 +11,7 @@ test.use({
 })
 
 test.beforeEach(async ({ page }) => {
+  test.skip(skipAll, 'valaxy-blog directory not found')
   await page.goto('/')
 })
 
@@ -35,6 +40,9 @@ test.describe('Create Valaxy Demo', () => {
   test('enter post', async ({ page }) => {
     await page.click('.post-title-link')
     await page.waitForURL('/posts/hello-valaxy')
-    await expect(page.locator('h1')).toHaveText('Hello, Valaxy!')
+    // Wait for the main content area to render
+    await page.waitForSelector('.yun-main', { state: 'visible' })
+    // The h1.post-title contains an inner span with the title text
+    await expect(page.locator('h1.post-title')).toContainText('Hello, Valaxy!')
   })
 })

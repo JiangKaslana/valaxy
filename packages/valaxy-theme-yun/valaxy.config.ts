@@ -27,8 +27,7 @@ function ThemeVitePlugin(options: ResolvedValaxyOptions<ThemeConfig>): Plugin {
             '@explosions/fireworks',
 
             '@vueuse/motion',
-            'primevue/toastservice',
-            'primevue/config',
+            'reka-ui',
           ],
           exclude: ['@docsearch/js'],
         },

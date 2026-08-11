@@ -5,7 +5,6 @@ import path from 'node:path'
 import process from 'node:process'
 import { consola } from 'consola'
 
-import { colors } from 'consola/utils'
 import { mergeConfig } from 'vite'
 import { createValaxyNode } from '../app'
 import { build, postProcessForSSG, ssgBuild } from '../build'
@@ -13,8 +12,12 @@ import { build, postProcessForSSG, ssgBuild } from '../build'
 import { mergeViteConfigs } from '../common'
 import { callHookWithLog } from '../logger'
 import { setupModules } from '../modules'
+import { contentModule } from '../modules/content'
 import { fuseModule } from '../modules/fuse'
+// cspell:word llms
+import { llmsModule } from '../modules/llms'
 import { rssModule } from '../modules/rss'
+import { validateTaxonomyI18n } from '../modules/taxonomy-i18n'
 import { resolveOptions } from '../options'
 import { isPagesDirExist, setEnvProd, setTimezone } from '../utils/env'
 import { commonOptions } from './options'
@@ -26,7 +29,7 @@ import { printInfo } from './utils/cli'
 export async function execBuild({ ssg, root, output, log }: { ssg: boolean, root: string, output: string, log: string }) {
   setEnvProd()
 
-  if (!isPagesDirExist(root))
+  if (!(await isPagesDirExist(root)))
     process.exit(0)
 
   const userRoot = path.resolve(root)
@@ -41,10 +44,15 @@ export async function execBuild({ ssg, root, output, log }: { ssg: boolean, root
   await callHookWithLog('options:resolved', valaxyApp)
 
   const modules: ValaxyModule[] = []
+  // Content loaders must run first so CMS pages are available to downstream modules
+  if (options.config.loaders?.length)
+    modules.push(contentModule)
   if (options.config.siteConfig.search.provider === 'fuse')
     modules.push(fuseModule)
   if (options.config.modules.rss.enable)
     modules.push(rssModule)
+  if (options.config.siteConfig.llms.enable)
+    modules.push(llmsModule)
 
   // setup modules
   setupModules(
@@ -72,19 +80,20 @@ export async function execBuild({ ssg, root, output, log }: { ssg: boolean, root
 
   // before build
   await callHookWithLog('build:before', valaxyApp)
+  await validateTaxonomyI18n(options)
 
   consola.box('🌠 Start building...')
   try {
     if (ssg) {
-      consola.info(`use ${colors.yellow('vite-ssg')} to do ssg build...`)
-
+      consola.info('use valaxy SSG engine to build...')
       try {
-        await ssgBuild(valaxyApp, viteConfig)
+        const userSsgOptions = (viteConfig as any).ssgOptions || {}
+        delete (viteConfig as any).ssgOptions
+        await ssgBuild(valaxyApp, viteConfig, userSsgOptions)
         await postProcessForSSG(options)
       }
       catch (e) {
-        consola.error('[vite-ssg] An internal error occurred.')
-
+        consola.error('[valaxy-ssg] An internal error occurred.')
         console.log(e)
       }
     }
@@ -113,8 +122,6 @@ export function registerBuildCommand(cli: Argv) {
       .option('ssg', {
         alias: 's',
         type: 'boolean',
-        // https://github.com/antfu/vite-ssg/pull/219
-        // to be true, when vite-ssg export build
         default: false,
         describe: 'static site generate',
       })

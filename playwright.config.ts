@@ -1,3 +1,4 @@
+import fs from 'node:fs'
 import process from 'node:process'
 import { defineConfig, devices } from '@playwright/test'
 
@@ -94,15 +95,21 @@ export default defineConfig({
     },
     {
       command: 'pnpm -C demo/yun run serve',
-      // url: 'http://localhost:4860',
-      // use dist
       url: 'http://localhost:4173',
       reuseExistingServer: !process.env.CI,
     },
     {
-      command: 'pnpm -C valaxy-blog dev --port 4861',
-      url: 'http://localhost:4861',
+      command: 'pnpm -C demo/yun run dev',
+      url: 'http://localhost:4860',
       reuseExistingServer: !process.env.CI,
     },
+    // valaxy-blog is an optional local checkout used by create-valaxy tests
+    ...fs.existsSync('valaxy-blog')
+      ? [{
+          command: 'pnpm -C valaxy-blog dev --port 4861',
+          url: 'http://localhost:4861',
+          reuseExistingServer: !process.env.CI,
+        }]
+      : [],
   ],
 })

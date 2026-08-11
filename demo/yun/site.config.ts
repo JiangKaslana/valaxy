@@ -6,19 +6,22 @@ export default defineSiteConfig({
   },
 
   lang: 'zh-CN',
+
   // disable show language switch
   // languages: ['zh-CN'],
 
   title: $t('siteConfig.title'),
+
   subtitle: $t('siteConfig.subtitle'),
   timezone: 'Asia/Shanghai',
-  url: 'https://yun.valaxy.site/',
+  url: 'https://kianakaslana.top/',
+
   author: {
-    avatar: 'https://www.yunyoujun.cn/images/avatar.jpg',
+    avatar: 'https://github.com/JiangKaslana.png',
     name: $t('siteConfig.author.name'),
   },
-  description: $t('siteConfig.description'),
 
+  description: $t('siteConfig.description'),
   orderBy: 'date',
 
   social: [
@@ -36,7 +39,7 @@ export default defineSiteConfig({
     },
     {
       name: 'GitHub',
-      link: 'https://github.com/YunYouJun',
+      link: 'https://github.com/JiangKaslana',
       icon: 'i-ri-github-line',
       color: '#6e5494',
     },
@@ -104,9 +107,10 @@ export default defineSiteConfig({
 
   search: {
     enable: true,
-    // type: 'algolia',
-    type: 'fuse',
+    // provider: 'algolia',
+    provider: 'fuse',
   },
+
   fuse: {
     options: {
       keys: ['title', 'tags', 'categories', 'excerpt', 'content'],
@@ -155,6 +159,11 @@ export default defineSiteConfig({
     enable: true,
   },
 
+  llms: {
+    enable: true,
+    files: true,
+  },
+
   redirects: {
     useVueRouter: true,
     rules: [
@@ -165,4 +174,5 @@ export default defineSiteConfig({
     ],
   },
 
+  lastUpdated: false,
 })

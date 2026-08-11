@@ -1,4 +1,4 @@
-import type { SiteConfig } from '../../../types'
+import type { PostFrontMatter, SiteConfig } from '../../../types'
 import type { ValaxyExtendConfig } from '../../types'
 import { existsSync, readFileSync } from 'node:fs'
 
@@ -60,18 +60,26 @@ export function presetStatistics({
   if (existsSync(absolutePath)) {
     const file = readFileSync(absolutePath, 'utf-8')
     const { wordCount, readingTime } = statistics(file, {
-      readTime: Object.assign({
+      readTime: {
+        ...options.readTime,
         speed: {
-          cn: 300,
-          en: 100,
+          cn: options.readTime?.speed?.cn || 300,
+          en: options.readTime?.speed?.en || 100,
         },
-      }, options.readTime),
+      },
     })
-    if (route.meta.frontmatter) {
-      if (!route.meta.frontmatter.wordCount)
-        route.meta.frontmatter.wordCount = wordCount
-      if (!route.meta.frontmatter.readingTime)
-        route.meta.frontmatter.readingTime = readingTime
+    const { frontmatter } = route.meta
+    // Type guard: check if frontmatter is a mutable object
+    if (frontmatter && typeof frontmatter === 'object' && !Array.isArray(frontmatter)) {
+      // Use Partial<PostFrontMatter> because:
+      // 1. wordCount and readingTime are optional at runtime (marked as @protected)
+      // 2. These properties are dynamically added during build-time
+      // 3. Partial allows us to safely check and assign missing properties
+      const fm = frontmatter as Partial<PostFrontMatter>
+      if (!fm.wordCount)
+        fm.wordCount = wordCount
+      if (!fm.readingTime)
+        fm.readingTime = readingTime
     }
   }
 }

@@ -34,7 +34,7 @@ const isLocked = useScrollLock(isClient ? document.body : null)
 /* stylelint-disable selector-class-pattern */
 .pr-NavScreen {
   position: fixed;
-  inset: calc(var(--pr-nav-height) + var(--pr-layout-top-height, 0px) + 1px) 0 0 0;
+  inset: calc(var(--pr-nav-height) + var(--pr-layout-top-height, 0px) + 1px) 0 0;
 
   /* rtl:ignore */
 
@@ -42,19 +42,20 @@ const isLocked = useScrollLock(isClient ? document.body : null)
   padding: 0 32px;
   width: 100%;
   background-color: var(--pr-nav-screen-bg-color);
+  z-index: var(--pr-z-nav-screen);
   overflow-y: auto;
-  transition: background-color 0.5s;
+  transition: background-color var(--va-transition-duration-moderate);
   pointer-events: auto;
 }
 
 .pr-NavScreen.fade-enter-active,
 .pr-NavScreen.fade-leave-active {
-  transition: opacity 0.25s;
+  transition: opacity var(--va-transition-duration);
 }
 
 .pr-NavScreen.fade-enter-active .container,
 .pr-NavScreen.fade-leave-active .container {
-  transition: transform 0.25s ease;
+  transition: transform var(--va-transition-duration) ease;
 }
 
 .pr-NavScreen.fade-enter-from,

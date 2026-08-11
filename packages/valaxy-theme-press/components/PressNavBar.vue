@@ -1,6 +1,7 @@
 <script lang="ts" setup>
-import { useSidebar, useSiteConfig } from 'valaxy'
-import { useThemeConfig } from '../composables'
+import { useSidebar, useSiteConfig, withBase } from 'valaxy'
+import { computed } from 'vue'
+import { useLocaleConfig } from '../composables'
 
 defineProps<{
   isScreenOpen?: boolean
@@ -13,16 +14,17 @@ defineEmits<{
 const { hasSidebar } = useSidebar()
 
 const siteConfig = useSiteConfig()
-const themeConfig = useThemeConfig()
+const { localeConfig, currentLocale, hasLocales } = useLocaleConfig()
+const homeLink = computed(() => hasLocales.value ? currentLocale.value.link : '/')
 </script>
 
 <template>
   <div class="pr-navbar flex justify-between items-center pl-4 pr-2" :class="{ 'has-sidebar': hasSidebar }">
     <RouterLink
       class="text-xl flex justify-center items-center font-black gradient-text from-purple-800 to-blue-500 bg-gradient-to-r"
-      to="/" :aria-label="siteConfig.title"
+      :to="homeLink" :aria-label="siteConfig.title"
     >
-      <img v-if="themeConfig.logo" class="logo" :src="themeConfig.logo" alt="LOGO">
+      <img v-if="localeConfig.logo" class="logo" :src="withBase(localeConfig.logo)" alt="LOGO">
       <span class="inline-flex">{{ siteConfig.title }}</span>
     </RouterLink>
     <div class="self-stretch flex justify-center items-center text-sm leading-5">
@@ -41,11 +43,11 @@ const themeConfig = useThemeConfig()
 @use 'valaxy/client/styles/mixins/index.scss' as *;
 
 :root {
-  --pr-navbar-c-bg: rgba(255, 255, 255, 0.8);
+  --pr-navbar-c-bg: rgb(255 255 255 / 0.8);
 }
 
 .dark {
-  --pr-navbar-c-bg: rgba(24, 24, 24, 0.3);
+  --pr-navbar-c-bg: rgb(24 24 24 / 0.3);
 }
 
 .logo {
@@ -59,7 +61,7 @@ const themeConfig = useThemeConfig()
   border-bottom: 1px solid var(--pr-c-divider-light);
   padding: 0 8px 0 24px;
   height: var(--pr-nav-height);
-  transition: border-color 0.5s;
+  transition: border-color var(--va-transition-duration-moderate);
   background-color: var(--pr-navbar-c-bg);
   z-index: var(--pr-z-nav);
 }
@@ -79,11 +81,11 @@ const themeConfig = useThemeConfig()
 
   @supports not (backdrop-filter: saturate(50%) blur(8px)) {
     .pr-navbar.has-sidebar .content {
-      background: rgba(255, 255, 255, 0.95);
+      background: rgb(255 255 255 / 0.95);
     }
 
     .dark .pr-navbar.has-sidebar .content {
-      background: rgba(36, 36, 36, 0.95);
+      background: rgb(36 36 36 / 0.95);
     }
   }
 }

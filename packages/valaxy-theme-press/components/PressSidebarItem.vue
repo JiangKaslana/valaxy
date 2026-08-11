@@ -19,8 +19,6 @@ const {
   toggle,
 } = useSidebarControl(computed(() => props.item))
 
-const sectionTag = computed(() => (hasChildren.value ? 'section' : `div`))
-
 const linkTag = computed(() => (isLink.value ? 'a' : 'div'))
 
 const textTag = computed(() => {
@@ -31,7 +29,13 @@ const textTag = computed(() => {
       : `h${props.depth + 2}`
 })
 
-const itemRole = computed(() => (isLink.value ? undefined : 'button'))
+const rawText = computed(() => props.item.text || '')
+
+const childItems = computed(() => props.item.items || [])
+
+const hasChildItems = computed(() => childItems.value.length > 0)
+
+const hasCaret = computed(() => collapsible.value && hasChildItems.value)
 
 const classes = computed(() => [
   [`level-${props.depth}`],
@@ -42,6 +46,8 @@ const classes = computed(() => [
   { 'has-active': hasActiveLink.value },
 ])
 
+const itemRole = computed(() => (hasCaret.value && !isLink.value ? 'button' : undefined))
+
 function onItemInteraction(e: MouseEvent | Event) {
   if ('key' in e && e.key !== 'Enter')
     return
@@ -49,27 +55,28 @@ function onItemInteraction(e: MouseEvent | Event) {
   !props.item.link && toggle()
 }
 
-function onCaretClick() {
-  props.item.link && toggle()
-}
-
 const { t } = useI18n()
 
-const htmlText = computed(() => t(props.item.text || ''))
+const htmlText = computed(() => {
+  return t(rawText.value) || rawText.value
+})
+
+function getChildItemKey(item: DefaultTheme.SidebarItem, index: number): string | number {
+  return item.text || item.link || index
+}
 </script>
 
 <template>
-  <component
-    :is="sectionTag"
-    class="VPSidebarItem" :class="classes"
+  <li
+    class="VPSidebarItem press-sidebar-item-node" :class="classes"
   >
     <div
-      v-if="item.text"
+      v-if="rawText"
       class="press-sidebar-item item"
       :role="itemRole"
-      :tabindex="item.items && 0"
+      :tabindex="hasCaret && !props.item.link ? 0 : undefined"
       v-on="
-        item.items
+        hasCaret && !props.item.link
           ? { click: onItemInteraction, keydown: onItemInteraction }
           : {}
       "
@@ -77,47 +84,57 @@ const htmlText = computed(() => t(props.item.text || ''))
       <div class="indicator" />
 
       <AppLink
-        v-if="item.link"
+        v-if="props.item.link"
         :tag="linkTag"
         class="link"
-        :href="item.link"
-        :rel="item.rel"
-        :target="item.target"
+        :href="props.item.link"
+        :rel="props.item.rel"
+        :target="props.item.target"
       >
-        <!-- eslint-disable-next-line vue/no-v-text-v-html-on-component -->
-        <component :is="textTag" class="text ml-1" v-html="htmlText" />
+        <component :is="textTag" class="text ml-1">
+          <span v-html="htmlText" />
+        </component>
       </AppLink>
-      <!-- eslint-disable-next-line vue/no-v-text-v-html-on-component -->
-      <component :is="textTag" v-else class="text ml-1" v-html="htmlText" />
+      <component :is="textTag" v-else class="text ml-1">
+        <span v-html="htmlText" />
+      </component>
 
       <button
-        v-if="item.collapsed != null && item.items"
-        tabindex="0" role="button" aria-label="toggle section"
-        class="caret folder-action inline-flex cursor-pointer"
-        @click="onCaretClick" @keydown.enter="onCaretClick"
+        v-if="hasCaret"
+        type="button"
+        aria-label="toggle section"
+        :aria-expanded="!collapsed"
+        class="caret"
+        @click.stop="toggle"
       >
-        <div v-if="collapsed" i-ri-folder-add-line />
-        <div v-else i-ri-folder-reduce-line />
+        <span class="caret-icon" :class="{ open: !collapsed }" i-ri-arrow-right-s-line aria-hidden="true" />
       </button>
     </div>
 
-    <div v-if="item.items && item.items.length" class="items">
+    <ul v-if="hasChildItems" class="items press-sidebar-item-list">
       <template v-if="depth < 5">
         <PressSidebarItem
-          v-for="i in item.items"
-          :key="i.text"
+          v-for="(i, index) in childItems"
+          :key="getChildItemKey(i, index)"
           :item="i"
           :depth="depth + 1"
         />
       </template>
-    </div>
-  </component>
+    </ul>
+  </li>
 </template>
 
 <style scoped>
-/* .VPSidebarItem.level-0 {
+.press-sidebar-item-node,
+.press-sidebar-item-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.VPSidebarItem.level-0 {
   padding-bottom: 24px;
-} */
+}
 
 .VPSidebarItem.collapsed.level-0 {
   padding-bottom: 10px;
@@ -140,7 +157,7 @@ const htmlText = computed(() => t(props.item.text || ''))
   left: -17px;
   width: 2px;
   border-radius: 2px;
-  transition: background-color 0.25s;
+  transition: background-color var(--va-transition-duration);
 }
 
 .VPSidebarItem.level-2.is-active > .item > .indicator,
@@ -161,7 +178,7 @@ const htmlText = computed(() => t(props.item.text || ''))
   padding: 4px 0;
   line-height: 24px;
   font-size: 14px;
-  transition: color 0.25s;
+  transition: color var(--va-transition-duration);
 }
 
 .VPSidebarItem.level-0 .text {

@@ -12,18 +12,21 @@ const yunApp = useYunAppStore()
 const siteConfig = useSiteConfig()
 const themeConfig = useThemeConfig()
 
-const showMenu = ref(false)
+// Always render the menu to avoid SSG hydration mismatch.
+// On home page, the fade-in animation is applied after mount.
+const showMenu = ref(true)
 const route = useRoute()
-onMounted(() => {
-  if (route.meta.layout === 'home') {
-    setTimeout(() => {
-      showMenu.value = true
-    }, 600)
-  }
-  else {
-    showMenu.value = true
-  }
-})
+if (!import.meta.env.SSR) {
+  // During client-side navigation to home, re-trigger the fade-in
+  onMounted(() => {
+    if (route.meta.layout === 'home') {
+      showMenu.value = false
+      setTimeout(() => {
+        showMenu.value = true
+      }, 600)
+    }
+  })
+}
 
 const playAnimation = ref(false)
 watch(() => yunApp.scrollY, () => {
@@ -44,22 +47,21 @@ const app = useAppStore()
       v-if="showMenu"
       class="yun-nav-menu z-$yun-z-nav-menu fixed bg-transparent"
       :class="{
-        play: playAnimation,
+        'shadow play': playAnimation,
       }"
     >
       <!--  -->
       <div class="inline-flex justify-start items-center flex-1">
         <ValaxyHamburger
-          v-if="!yunApp.size.isLg"
           :active="yunApp.fullscreenMenu.isOpen"
-          class="menu-btn sidebar-toggle leading-4 size-12"
+          class="menu-btn sidebar-toggle leading-4 size-12 lg:hidden"
           inline-flex cursor="pointer"
           hover="bg-white/80 dark:bg-black/80"
           z="$yun-z-menu-btn"
           @click="yunApp.fullscreenMenu.toggle()"
         />
         <YunNavMenuItem icon="i-ri-home-4-line" to="/" />
-        <template v-if="yunApp.size.isLg">
+        <div class="hidden lg:contents">
           <YunNavMenuItem
             v-for="item, i in themeConfig.nav"
             :key="i"
@@ -67,7 +69,7 @@ const app = useAppStore()
             :to="item.link"
             :title="$t(item.text)"
           />
-        </template>
+        </div>
       </div>
 
       <div class="flex flex-1 flex-center">
@@ -92,8 +94,8 @@ const app = useAppStore()
         </template> -->
 
         <YunToggleLocale
-          v-if="yunApp.size.isSm && app.showToggleLocale"
-          class="rounded-none!"
+          v-if="app.showToggleLocale"
+          class="rounded-none! hidden sm:inline-flex"
         />
         <YunToggleDark class="rounded-none!" transition />
         <YunSearchTrigger v-if="siteConfig.search.enable" />
@@ -111,8 +113,8 @@ const app = useAppStore()
   // safari not support
   // animation-timeline: scroll();
   // animation-range: 0 calc(30vh), exit;
-  box-shadow: none;
   display: flex;
+
   // top: var(--rect-margin);
   // left: var(--rect-margin);
   // right: var(--rect-margin);
@@ -120,23 +122,17 @@ const app = useAppStore()
   top: 0;
   left: 0;
   right: 0;
-
   align-items: center;
   justify-content: space-between;
   height: var(--yun-nav-height, 50px);
-  transition: all 0.5s map.get($cubic-bezier, 'ease-in');
+  transition: background-color var(--va-transition-duration-moderate) map.get($cubic-bezier, 'ease-in'),
+    backdrop-filter var(--va-transition-duration-moderate) map.get($cubic-bezier, 'ease-in'),
+    box-shadow var(--va-transition-duration-moderate) map.get($cubic-bezier, 'ease-in');
 
   &.play {
-    top: 0;
-    left: 0;
-    right: 0;
-    background-color: var(--va-c-bg);
-    border-color: rgb(0 0 0 / 0.1);
-
-    --un-shadow: var(--un-shadow-inset) 0 20px 25px -5px var(--un-shadow-color, rgb(0 0 0 / 0.1)), var(--un-shadow-inset) 0 8px 10px -6px var(--un-shadow-color, rgb(0 0 0 / 0.1));
-
-    box-shadow: var(--un-ring-offset-shadow), var(--un-ring-shadow),
-      var(--un-shadow);
+    background-color: var(--yun-nav-bg-color);
+    backdrop-filter: blur(var(--yun-nav-blur));
+    -webkit-backdrop-filter: blur(var(--yun-nav-blur));
   }
 
   .vt-hamburger-top, .vt-hamburger-middle, .vt-hamburger-bottom {

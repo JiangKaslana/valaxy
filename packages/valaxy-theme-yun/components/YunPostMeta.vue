@@ -1,32 +1,20 @@
 <script lang="ts" setup>
 import type { Post } from 'valaxy'
-import { useAppStore, useSiteConfig } from 'valaxy'
+import { useSiteConfig } from 'valaxy'
 import { useI18n } from 'vue-i18n'
-
-// @TODO: add edit by vscode directly when dev
 
 defineProps<{
   // FrontMatter
   frontmatter: Post
 }>()
 
-const app = useAppStore()
 const { t } = useI18n()
 
 const siteConfig = useSiteConfig()
 </script>
 
 <template>
-  <div v-if="frontmatter.draft" class="post-draft-icon" title="draft">
-    <div i-ri-draft-line />
-  </div>
-  <div v-if="frontmatter.hide" class="post-top-icon" color="$va-c-danger" :title="`hide:${frontmatter.hide}`">
-    <div v-if="frontmatter.hide === 'index'" i-ri-eye-close-line />
-    <div v-else i-ri-eye-off-line />
-  </div>
-  <div v-if="frontmatter.top" class="post-top-icon" color="$va-c-warning">
-    <div i-ri-pushpin-line />
-  </div>
+  <YunPostStatusIcons :frontmatter="frontmatter" />
 
   <div
     v-if="frontmatter"
@@ -34,7 +22,7 @@ const siteConfig = useSiteConfig()
     flex="~ center"
     text="sm"
     :class="{
-      'flex-col gap-2!': app.isMobile || frontmatter.updated,
+      'post-meta-col': frontmatter.updated,
     }"
   >
     <YunPostDateMeta :frontmatter="frontmatter" />
@@ -64,23 +52,23 @@ const siteConfig = useSiteConfig()
       </div>
 
       <YunWalineMeta />
+
+      <ValaxyOpenInEditor />
     </div>
   </div>
 </template>
 
 <style>
-.post-draft-icon {
-  position: absolute;
-  top: 1rem;
-  left: 1rem;
-  color: var(--va-c-gray);
-  font-size: 1.2rem;
+/* Use CSS media query for mobile layout instead of JS isMobile to avoid hydration mismatch */
+@media (width <= 768px) {
+  .post-meta {
+    flex-direction: column;
+    gap: 0.5rem !important;
+  }
 }
 
-.post-top-icon {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  font-size: 1.2rem;
+.post-meta-col {
+  flex-direction: column;
+  gap: 0.5rem !important;
 }
 </style>

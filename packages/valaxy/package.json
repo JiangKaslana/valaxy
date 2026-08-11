@@ -1,7 +1,7 @@
 {
   "name": "valaxy",
   "type": "module",
-  "version": "0.26.13",
+  "version": "1.0.0-rc.4",
   "description": "📄 Vite & Vue powered static blog generator.",
   "author": {
     "email": "me@yunyoujun.cn",
@@ -57,7 +57,7 @@
     "types"
   ],
   "engines": {
-    "node": "^14.18.0 || >=16.0.0"
+    "node": ">=22.12.0"
   },
   "scripts": {
     "clean": "rimraf dist",
@@ -66,6 +66,10 @@
     "preview": "vite preview",
     "preview-https": "serve dist",
     "release:beta": "bumpp --no-tag --no-commit --no-push && pnpm publish --no-git-checks --tag beta"
+  },
+  "peerDependencies": {
+    "vue": "^3.5.0",
+    "vue-router": "^5.0.0"
   },
   "dependencies": {
     "@antfu/install-pkg": "catalog:",
@@ -84,7 +88,6 @@
     "@vue/devtools-api": "catalog:",
     "@vueuse/core": "catalog:",
     "@vueuse/integrations": "catalog:",
-    "beasties": "catalog:",
     "consola": "catalog:build",
     "cross-spawn": "catalog:",
     "css-i18n": "catalog:",
@@ -119,10 +122,12 @@
     "markdown-it-task-lists": "catalog:",
     "medium-zoom": "catalog:",
     "mermaid": "catalog:",
+    "minisearch": "catalog:",
     "mlly": "catalog:",
     "nprogress": "catalog:",
     "open": "catalog:",
     "ora": "catalog:",
+    "p-map": "catalog:",
     "pascalcase": "catalog:",
     "pathe": "catalog:",
     "pinia": "catalog:",
@@ -136,18 +141,13 @@
     "unocss": "catalog:",
     "unplugin-vue-components": "catalog:",
     "unplugin-vue-markdown": "catalog:",
-    "unplugin-vue-router": "catalog:build",
     "vanilla-lazyload": "catalog:",
     "vite": "catalog:build",
-    "vite-dev-rpc": "catalog:",
     "vite-plugin-vue-devtools": "catalog:",
-    "vite-plugin-vue-layouts": "catalog:",
-    "vite-ssg": "catalog:",
+    "vite-plugin-vue-layouts-next": "catalog:",
     "vite-ssg-sitemap": "catalog:",
     "vitepress-plugin-group-icons": "catalog:",
-    "vue": "catalog:frontend",
     "vue-i18n": "catalog:build",
-    "vue-router": "catalog:",
     "yargs": "catalog:"
   },
   "devDependencies": {
@@ -169,12 +169,12 @@
     "@types/pascalcase": "catalog:",
     "@types/qrcode": "catalog:",
     "@types/yargs": "catalog:",
-    "cilicili": "catalog:",
-    "diacritics": "catalog:",
     "gh-pages": "catalog:",
     "https-localhost": "catalog:",
-    "p-map": "catalog:",
+    "nanoid": "catalog:",
     "rollup-plugin-visualizer": "catalog:",
-    "unbuild": "catalog:build"
+    "unbuild": "catalog:build",
+    "vue": "catalog:frontend",
+    "vue-router": "catalog:"
   }
 }

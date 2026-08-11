@@ -3,7 +3,6 @@ import type { NavItemLink } from '../types'
 
 defineProps<{
   text?: string
-  // todo
   items: NavItemLink[]
 }>()
 </script>
@@ -32,6 +31,6 @@ defineProps<{
   font-size: 13px;
   font-weight: 700;
   color: var(--pr-c-text-2);
-  transition: color 0.25s;
+  transition: color var(--va-transition-duration);
 }
 </style>

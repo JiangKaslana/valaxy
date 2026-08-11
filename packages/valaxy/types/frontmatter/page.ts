@@ -110,6 +110,18 @@ export interface PageFrontMatter extends BaseFrontMatter {
    */
   cover: string
   /**
+   * @description:en-US Open Graph image for SEO
+   * @description:zh-CN Open Graph 图片，用于 SEO
+   */
+  ogImage: string
+  /**
+   * @protected
+   * @tutorial ⚠️ DO NOT SET MANUALLY (auto-extracted from markdown content)
+   * @description:en-US First image URL extracted from markdown content
+   * @description:zh-CN 从 Markdown 内容中自动提取的第一张图片 URL
+   */
+  firstImage: string
+  /**
    * display toc
    * @description 是否显示目录
    */
@@ -144,11 +156,6 @@ export interface PageFrontMatter extends BaseFrontMatter {
    */
   icon: string
   /**
-   * title color
-   * @deprecated Please use `pageTitleClass` | `postTitleClass` instead
-   */
-  color: string
-  /**
    * display comment
    */
   comment: boolean
@@ -159,7 +166,12 @@ export interface PageFrontMatter extends BaseFrontMatter {
   end: boolean
 
   /**
-   * use katex
+   * Enable/disable KaTeX math rendering for this page.
+   * Overrides the global `features.katex` setting.
+   *
+   * - When `features.katex: true` (default), set `katex: false` to disable KaTeX for this page.
+   * - When `features.katex: false`, set `katex: true` to enable KaTeX for this page.
+   *
    * @url https://katex.org/
    */
   katex: boolean

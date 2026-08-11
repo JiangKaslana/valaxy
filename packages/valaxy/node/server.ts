@@ -5,8 +5,9 @@ import process from 'node:process'
 import { colors } from 'consola/utils'
 import { createServer as createViteServer, mergeConfig as mergeViteConfig } from 'vite'
 // import { serverSpinner } from './cli/utils/cli'
-import { valaxyPrefix } from './logger'
+import { valaxyPrefix, vLogger } from './logger'
 import { ViteValaxyPlugins } from './plugins/preset'
+import { countPerformanceTime } from './utils/performance'
 
 /**
  * with valaxyPrefix
@@ -26,7 +27,9 @@ export async function createServer(
   const { options } = valaxyApp
 
   // serverSpinner.text = getServerInfoText('init vite plugins ..')
-  const plugins = await ViteValaxyPlugins(valaxyApp, serverOptions)
+  const pluginsTimer = countPerformanceTime()
+  const plugins = await ViteValaxyPlugins(valaxyApp, serverOptions, viteConfig)
+  vLogger.debug(`ViteValaxyPlugins: ${pluginsTimer()}`)
 
   // dynamic import to avoid bundle it in build
   const enableDevtools = options.config.devtools
@@ -34,13 +37,19 @@ export async function createServer(
     ...plugins,
   ]
   if (enableDevtools) {
-    // only enable when dev
+    // only enable when dev — import both in parallel
+    const devtoolsTimer = countPerformanceTime()
+    const [vueDevtools, valaxyDevtools] = await Promise.all([
+      import('vite-plugin-vue-devtools'),
+      import('@valaxyjs/devtools'),
+    ])
     vitePlugins.push(
-      (await import('vite-plugin-vue-devtools')).default(),
-      (await import('@valaxyjs/devtools')).default({
+      vueDevtools.default(),
+      valaxyDevtools.default({
         userRoot: options.userRoot,
       }),
     )
+    vLogger.debug(`devtools plugins: ${devtoolsTimer()}`)
   }
 
   // serverSpinner.text = getServerInfoText('merge vite config ...')
@@ -51,6 +60,8 @@ export async function createServer(
     },
   )
   // serverSpinner.text = getServerInfoText('create vite server ...')
+  const viteServerTimer = countPerformanceTime()
   const server = await createViteServer(mergedViteConfig)
+  vLogger.debug(`createViteServer: ${viteServerTimer()}`)
   return server
 }

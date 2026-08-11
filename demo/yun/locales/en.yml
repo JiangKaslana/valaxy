@@ -1,23 +1,19 @@
 docs:
   view_docs: See Docs
-
 excerpt:
   ai: AI-Generated Excerpt
-
 siteConfig:
-  title: Custom Blog Name
-  subtitle: Next Generation Static Blog Framework.
-  description: Valaxy Theme Yun Preview
+  title: JiangKaslana's Blog
+  subtitle: Notes on technology, life, and ideas
+  description: JiangKaslana's personal blog for technical notes, project logs, and everyday thoughts.
   author:
-    name: YunYouJun
+    name: JiangKaslana
   social:
     bilibili: Bilibili
   sponsor:
     alipay: Alipay
     wechatpay: WeChat Pay
-
 tag:
   notes: Notes
-
 category:
   test: Test

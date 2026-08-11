@@ -18,7 +18,8 @@
 </p>
 
 - **English** | [简体中文](./README.zh-CN.md)
-- [English Docs](https://valaxy.site/?lang=en) | [中文文档](https://valaxy.site/?lang=zh-CN) | [Docs for Beta](https://beta.valaxy.site)
+- [English Docs](https://valaxy.site/) | [中文文档](https://valaxy.site/zh/) | [Docs for Beta](https://beta.valaxy.site)
+- [Theme Press Docs](https://valaxy.site/themes/press) | [Theme Press Preview](https://press.valaxy.site)
 - [Demo](https://yun.valaxy.site): <small>with [valaxy-theme-yun](./packages/valaxy-theme-yun/)</small>
 
 ## Usage
@@ -44,18 +45,18 @@ For an example, you can see [demo/yun](./demo/yun/) folder.
 
 ## Features
 
-- ⚡️ [Vue 3](https://github.com/vuejs/vue-next), [Vite 5](https://github.com/vitejs/vite), [pnpm](https://pnpm.js.org/), [ESBuild](https://github.com/evanw/esbuild) - born with fastness
+- ⚡️ [Vue 3](https://github.com/vuejs/vue-next), [Vite 8](https://github.com/vitejs/vite), [pnpm](https://pnpm.js.org/), [Rolldown](https://github.com/rolldown/rolldown) - born with fastness
 - 🔥 Hot Reload with Config & Markdown
 - 🔧 Type Tooltip for all config by `valaxy.config.ts`
 - 🗒 Extended Markdown Frontmatter
-- 🗂 File based routing via [unplugin-vue-router](https://github.com/posva/unplugin-vue-router)
+- 🗂 File based routing via [vue-router](https://router.vuejs.org/file-based-routing/)
 - 📦 Components auto importing via [unplugin-vue-components](https://github.com/antfu/unplugin-vue-components)
-- 🖨 Static-site generation (SSG) via [vite-ssg](https://github.com/antfu/vite-ssg) (SPA is OK!)
+- 🖨 Static-site generation (SSG) via the built-in Valaxy SSG engine (SPA is OK!)
 - 🕸 RSS & Sitemap
 - 🎨 Free to use Tailwind CSS via [UnoCSS](https://github.com/antfu/unocss)
 - 🌍 [CSS i18n in One Page](https://valaxy.site/guide/i18n)
 - 🔍 [Use icons from any icon sets with classes](https://github.com/antfu/unocss/tree/main/packages/preset-icons) - [Icônes](https://icones.netlify.app/)
-- 👔 Extended Theme with [Layout system](https://github.com/JohnCampionJr/vite-plugin-vue-layouts)
+- 👔 Extended Theme with [Layout system](https://github.com/loicduong/vite-plugin-vue-layouts-next)
 - ⚙️ Unit Testing with [Vitest](https://github.com/vitest-dev/vitest)
 - ☁️ Deploy zero-config
   - [Netlify](https://www.netlify.com/) with `netlify.toml`
@@ -87,7 +88,7 @@ Want to create your theme? Check [valaxy-theme-starter](https://github.com/YunYo
 
 <p align="center">
   <a href="https://www.yunyoujun.cn/sponsors/">
-    <img src='https://fastly.jsdelivr.net/gh/YunYouJun/sponsors/public/sponsors.svg'/>
+    <img src='https://fastly.jsdelivr.net/gh/YunYouJun/sponsors/public/sponsors.svg' alt="Sponsors"/>
   </a>
 </p>
 

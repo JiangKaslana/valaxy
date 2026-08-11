@@ -72,6 +72,8 @@ export const defaultThemeConfig: ThemeConfig = {
     beian: {
       enable: false,
       icp: '',
+      icpLink: 'https://beian.miit.gov.cn/',
+      police: '',
     },
   },
 

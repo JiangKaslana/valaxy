@@ -12,7 +12,9 @@ import { mergeViteConfigs } from '../../common'
 import { GLOBAL_STATE, version } from '../../env'
 import { valaxyPrefix, vLogger } from '../../logger'
 import { disposeMdItInstance, disposePreviewMdItInstance } from '../../plugins/markdown'
+import { disposeSharedHighlighter } from '../../plugins/markdown/highlighterCache'
 import { createServer } from '../../server'
+import { countPerformanceTime } from '../../utils/performance'
 
 export function printInfo(options: ResolvedValaxyOptions, port?: number, remote?: string | boolean) {
   const themeVersion = colors.blue(`v${options.config.themeConfig?.pkg?.version}`) || 'unknown'
@@ -52,6 +54,7 @@ export const serverSpinner = ora(`${valaxyPrefix} creating server ...`)
 export async function initServer(valaxyApp: ValaxyNode, viteConfig: InlineConfig) {
   disposeMdItInstance()
   disposePreviewMdItInstance()
+  disposeSharedHighlighter()
 
   if (GLOBAL_STATE.server) {
     vLogger.info('close server...')
@@ -61,10 +64,12 @@ export async function initServer(valaxyApp: ValaxyNode, viteConfig: InlineConfig
   const { options } = valaxyApp
 
   serverSpinner.start()
+  const mergeTimer = countPerformanceTime()
   const viteConfigs: InlineConfig = mergeConfig(
     await mergeViteConfigs(options, 'serve'),
     viteConfig,
   )
+  vLogger.debug(`mergeViteConfigs: ${mergeTimer()}`)
 
   try {
     GLOBAL_STATE.server = await createServer(valaxyApp, viteConfigs, {
@@ -94,7 +99,9 @@ export async function initServer(valaxyApp: ValaxyNode, viteConfig: InlineConfig
       },
     })
     const server = GLOBAL_STATE.server
+    const listenTimer = countPerformanceTime()
     await server.listen()
+    vLogger.debug(`server.listen: ${listenTimer()}`)
     serverSpinner.succeed(`${valaxyPrefix} ${colors.green('server ready.')}`)
     return server
   }
@@ -103,24 +110,4 @@ export async function initServer(valaxyApp: ValaxyNode, viteConfig: InlineConfig
     console.error(e)
     process.exit(1)
   }
-}
-
-/**
- * support vite-node reload (close server)
- * @see https://github.com/vitest-dev/vitest/discussions/1738
- */
-if (import.meta.hot) {
-  await import.meta.hot.data.stopping
-
-  let reload = async () => {
-    // info('Performing an HMR reload...'), stop()
-    consola.info('HMR: Stop Server')
-    await GLOBAL_STATE.server?.close()
-  }
-  import.meta.hot.on('vite:beforeFullReload', () => {
-    const stopping = reload()
-    reload = () => Promise.resolve()
-    if (import.meta.hot)
-      import.meta.hot.data.stopping = stopping
-  })
 }

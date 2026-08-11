@@ -92,7 +92,7 @@ $char-animation-duration: 0.4s;
   font-size: var(--banner-char-size, 1rem);
   background-color: var(--banner-char-bg-color);
   line-height: 1;
-  transition: all 0.3s ease-in-out;
+  transition: all var(--va-transition-duration) ease-in-out;
   transition-delay: 0s;
 
   &:hover {
@@ -110,7 +110,7 @@ $char-animation-duration: 0.4s;
   &-left {
     border-left: 1px solid var(--banner-line-color);
     /* stylelint-disable-next-line color-function-notation */
-    border-right: 0 solid rgba(var(--va-c-primary-rgb), 0.1);
+    border-right: 0 solid rgb(var(--va-c-primary-rgb), 0.1);
     border-right-width: 0;
     animation-name: char-move-left;
     animation-duration: $char-animation-duration;
@@ -121,7 +121,7 @@ $char-animation-duration: 0.4s;
 
   &-right {
     /* stylelint-disable-next-line color-function-notation */
-    border-left: 0 solid rgba(var(--va-c-primary-rgb), 0.1);
+    border-left: 0 solid rgb(var(--va-c-primary-rgb), 0.1);
     border-right: 1px solid var(--banner-line-color);
     border-left-width: 0;
     animation-name: char-move-right;

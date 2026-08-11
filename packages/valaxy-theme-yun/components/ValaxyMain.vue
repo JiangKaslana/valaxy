@@ -1,18 +1,14 @@
 <script lang="ts" setup>
 import type { PageData, Post } from 'valaxy'
-import type { StyleValue } from 'vue'
 import { onClickHref, onContentUpdated, scrollTo, usePostTitle, useSiteConfig } from 'valaxy'
-import { computed, nextTick } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { usePostProperty } from '../composables'
-import { useYunAppStore } from '../stores'
 
 const props = defineProps<{
   frontmatter: Post
   data?: PageData
 }>()
-
-const yun = useYunAppStore()
 
 const siteConfig = useSiteConfig()
 
@@ -24,7 +20,7 @@ const aside = computed(() => props.frontmatter.aside !== false)
 const route = useRoute()
 const router = useRouter()
 
-nextTick(() => {
+onMounted(() => {
   if (route.hash) {
     setTimeout(() => {
       scrollTo(document.body, route.hash, {
@@ -52,7 +48,8 @@ onContentUpdated(() => {
         flex="~ col grow"
         p="lt-md:0"
       >
-        <YunCard :cover="frontmatter.cover" m="0" class="relative" :style="styles as StyleValue">
+        <YunCard :cover="frontmatter.cover" m="0" v-bind="styles ? { style: styles } : {}">
+          <YunPostActions />
           <div class="mt-8 mb-4">
             <slot name="main-header">
               <YunPageHeader
@@ -64,6 +61,7 @@ onContentUpdated(() => {
               />
             </slot>
           </div>
+
           <slot name="main-header-after" />
 
           <div p="x-4 b-8" class="sm:px-6 lg:px-12 xl:px-16" w="full">
@@ -73,7 +71,9 @@ onContentUpdated(() => {
               <!-- <Transition appear> -->
               <ValaxyMd :frontmatter="frontmatter">
                 <YunAiExcerpt v-if="frontmatter.excerpt_type === 'ai' && frontmatter.excerpt" />
-                <YunMdTimeWarning />
+                <ClientOnly>
+                  <YunMdTimeWarning />
+                </ClientOnly>
 
                 <slot />
                 <slot name="main-content-md" />
@@ -97,7 +97,7 @@ onContentUpdated(() => {
           <YunComment :class="frontmatter.nav === false ? 'mt-4' : 0" />
         </slot>
 
-        <YunAdBoard v-if="!yun.size.isLg" class="mt-4" />
+        <YunAdBoard class="mt-4 lg:hidden" />
 
         <slot name="main-footer-before" />
         <slot name="main-footer-after" />

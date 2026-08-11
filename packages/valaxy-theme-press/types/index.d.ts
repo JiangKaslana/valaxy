@@ -4,8 +4,6 @@ export * from '../composables'
 export * from './home.d'
 
 export namespace PressTheme {
-  export type Sidebar = any
-
   export interface Footer {
     message?: string
     copyright?: string
@@ -32,9 +30,10 @@ export namespace PressTheme {
     text?: string
   }
 
-  export type Sidebar = SidebarItem[] | SidebarMulti
+  export type SidebarEntry = string | SidebarItem
+  export type Sidebar = SidebarEntry[] | SidebarMulti
   export interface SidebarMulti {
-    [path: string]: SidebarItem[] | { items: SidebarItem[], base: string }
+    [path: string]: SidebarEntry[] | { items: SidebarEntry[], base?: string }
   }
   export interface SidebarItem {
     /**
@@ -75,6 +74,17 @@ export namespace PressTheme {
     target?: string
   }
 
+  export interface LocaleSpecificConfig {
+    /** Label shown in locale switcher (e.g. "English", "简体中文") */
+    label?: string
+    /** BCP 47 language tag (e.g. "en", "zh-CN") */
+    lang?: string
+    /** URL prefix for this locale (e.g. "/zh/"), defaults to `/${key}/` */
+    link?: string
+    /** Per-locale theme config overrides, shallow-merged with top-level Config */
+    themeConfig?: Partial<Omit<Config, 'locales' | 'i18nRouting'>>
+  }
+
   export interface Config extends DefaultTheme.Config {
     logo: string
 
@@ -94,6 +104,17 @@ export namespace PressTheme {
     footer: Footer
 
     socialLinks: SocialLink[]
+
+    /**
+     * Locale configurations. Key is a path prefix ('root' for the default locale).
+     */
+    locales?: Record<string, LocaleSpecificConfig>
+
+    /**
+     * Whether to automatically adjust URL path when switching locales.
+     * @default false
+     */
+    i18nRouting?: boolean
   }
 }
 

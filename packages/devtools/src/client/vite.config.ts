@@ -4,9 +4,9 @@ import VueI18n from '@intlify/unplugin-vue-i18n/vite'
 import Vue from '@vitejs/plugin-vue'
 import Unocss from 'unocss/vite'
 import VueComponents from 'unplugin-vue-components/vite'
-import VueRouter from 'unplugin-vue-router/vite'
 import { defineConfig } from 'vite'
 import VueDevtools from 'vite-plugin-vue-devtools'
+import VueRouter from 'vue-router/vite'
 import { unoConfig } from '../../../../uno.config'
 import { config } from '../config'
 
@@ -15,6 +15,8 @@ import { ValaxyDevtools } from '../node'
 export default defineConfig(() => {
   return {
     base: './',
+
+    publicDir: path.resolve(__dirname, 'public'),
 
     resolve: {
       alias: {
@@ -73,12 +75,13 @@ export default defineConfig(() => {
 
       VueRouter({
         routesFolder: path.join(__dirname, 'pages'),
-        dts: path.join(__dirname, 'typed-routes.d.ts'),
+        dts: path.join(__dirname, 'route-map.d.ts'),
       }),
       Vue({
         include: [/\.vue$/, /\.md$/],
       }),
       VueComponents({
+        dirs: [path.join(__dirname, 'components')],
         dts: path.join(__dirname, 'components.d.ts'),
       }),
       Unocss(unoConfig),
@@ -101,14 +104,13 @@ export default defineConfig(() => {
     optimizeDeps: {
       include: [
         'dayjs',
-        'primevue/datepicker',
+        'dayjs/locale/zh-cn',
+        'dayjs/plugin/relativeTime',
         '@vueuse/core',
       ],
       exclude: [
         'valaxy',
         '@valaxyjs/devtools',
-        'vite-hot-client',
-        'vite-dev-rpc',
       ],
     },
 

@@ -1,20 +1,42 @@
 <script setup lang="ts">
-import { useCollection } from 'valaxy'
+import { resolveCollectionItemHref, useCollection } from 'valaxy'
+import { computed } from 'vue'
 
 const { collection } = useCollection()
+
+const resolvedItems = computed(() => {
+  if (!collection.value?.items || !collection.value.key)
+    return []
+  return collection.value.items.map(item => ({
+    ...item,
+    ...resolveCollectionItemHref(collection.value.key!, item),
+  }))
+})
 </script>
 
 <template>
-  <YunCard class="collection p-4 min-h-sm justify-start items-start" flex="~ col gap-1">
-    <section class="yun-sidebar-item">
+  <YunCard v-if="collection" class="collection p-4 justify-start items-start" flex="~ col gap-1">
+    <section class="yun-sidebar-item w-full">
       <RouterLink :to="`/collections/${collection.key}/`" class="title">
         {{ collection.title }}
       </RouterLink>
       <div class="items">
-        <div v-for="item in collection.items" :key="item.key" class="item">
+        <div v-for="item in resolvedItems" :key="item.key || item.link" class="item">
           <div class="indicator" />
+          <a
+            v-if="item.isExternal"
+            :href="item.href"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <p class="text inline-flex items-center gap-1">
+              {{ item.title }}
+              <span class="i-ri-external-link-line text-xs op-50" />
+            </p>
+          </a>
           <RouterLink
-            :to="`/collections/${collection.key}/${item.key}`"
+            v-else
+            :to="item.href"
           >
             <p class="text">
               {{ item.title }}
@@ -37,10 +59,8 @@ const { collection } = useCollection()
 
     .items {
       border-left: 1px solid var(--va-c-divider);
-
       color: #666;
       font-size: 0.9em;
-
       padding-left: 16px;
 
       .item {
@@ -50,13 +70,13 @@ const { collection } = useCollection()
           padding: 4px 0;
           font-size: 14px;
           line-height: 24px;
-          transition: color .25s;
+          transition: color var(--va-transition-duration);
         }
 
         .indicator {
           border-radius: 2px;
           width: 2px;
-          transition: background-color .25s;
+          transition: background-color var(--va-transition-duration);
           position: absolute;
           top: 6px;
           bottom: 6px;

@@ -1,7 +1,5 @@
 ---
-title:
-  en: Valaxy Themes Gallery
-  zh-CN: Valaxy 主题橱窗
+title: Valaxy Themes Gallery
 categories:
   - theme
 end: false
@@ -19,6 +17,7 @@ themes:
   - name: valaxy-theme-press
     icon: i-ri-book-line
     repo: https://github.com/YunYouJun/valaxy/tree/main/packages/valaxy-theme-press
+    docsUrl: /themes/press
     desc: Docs Theme for Valaxy
     siteImage: https://s2.loli.net/2023/05/05/1DyEudpohIl47cP.png
     siteExampleUrl: 'https://valaxy.site/'
@@ -48,7 +47,6 @@ themes:
     repo: https://github.com/hairyf/valaxy-theme-hairy
     desc: Hairy theme for valaxy
     siteImage: https://raw.githubusercontent.com/hairyf/valaxy-theme-hairy/main/public/preview.png
-    siteExampleUrl: 'https://www.hairy.blog/'
     tags:
       - hairy
       - blog
@@ -81,21 +79,28 @@ themes:
       - blog
       - antfu
       - dark
+  - name: valaxy-theme-shuimo
+    icon: i-ri-quill-pen-line
+    repo: https://github.com/JobinJia/valaxy-theme-shuimo
+    desc: Chinese ink-wash (水墨) style theme for Valaxy
+    siteImage: https://raw.githubusercontent.com/JobinJia/valaxy-theme-shuimo/main/screenshots/preview-light.png
+    siteExampleUrl: 'https://jobinjia.com/'
+    tags:
+      - blog
+      - shuimo
+      - chinese
+      - ink-wash
+  - name: valaxy-theme-lolimeow
+    icon: i-ri-magic-line
+    repo: https://github.com/Yoyo-514/valaxy-theme-lolimeow
+    desc: A soft anime-style blog theme
+    siteImage: https://raw.githubusercontent.com/Yoyo-514/valaxy-theme-lolimeow/main/public/images/example.png
+    siteExampleUrl: 'https://lolimeow.yoyo514.top/'
+    tags:
+      - blog
+      - anime
+      - lolimeow
+      - light
 ---
-::: zh-CN
-::: tip
-
-很高兴你看到这里，这里是 Valaxy 主题橱窗，我将会为提交主题（符合基础使用质量）的前五位作者赠送[「小云立牌」](https://twitter.com/YunYouJun/status/1633116052174299137) :P。
-
-欢迎 [提交主题](https://github.com/YunYouJun/valaxy/blob/main/docs/pages/themes/gallery.md)。
-:::
-
-::: en
-::: tip
-Nice to see you here. This is the Valaxy Themes Gallery, and I will give away [「小云立牌」](https://twitter.com/YunYouJun/status/1633116052174299137) to the top five authors who submitted the theme (meeting the basic usage quality) :P.
-
-Feel free to [submit your theme](https://github.com/YunYouJun/valaxy/blob/main/docs/pages/themes/gallery.md).
-:::
 
 <ThemeGallery :themes="$frontmatter.themes" />
-<br />

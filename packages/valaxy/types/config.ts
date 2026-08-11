@@ -5,6 +5,7 @@ import type { RouteRecordRaw } from 'vue-router'
 import type { ValaxyAddon } from './addon'
 import type { DefaultTheme } from './default-theme'
 import type { PostFrontMatter } from './frontmatter'
+import type { ExcerptType } from './frontmatter/post'
 import type { FuseListItem } from './node'
 
 import './default-theme'
@@ -172,15 +173,11 @@ export interface SiteConfig {
      */
     enable: boolean
     /**
-     * @deprecated will be deprecated, use search.provider instead
-     */
-    type?: SiteConfig['search']['provider']
-    /**
      * Search Type
      * - algolia: Algolia Search
      * - engine: Engine Search, like Google/Baidu
      * - fuse: Local Search by fuse.js
-     * - local(todo): Local Search by MiniSearch
+     * - local: Local Search by MiniSearch
      */
     provider: 'algolia' | 'engine' | 'fuse' | 'local'
   }
@@ -220,6 +217,35 @@ export interface SiteConfig {
        */
       keys: FuseOptions<FuseListItem>['keys']
     }
+  }
+
+  /**
+   * Excerpt configuration
+   * @description:en-US Global excerpt settings for posts
+   * @description:zh-CN 全局摘要配置
+   */
+  excerpt: {
+    /**
+     * @description:en-US Default excerpt render type for `<!-- more -->` and auto-generated excerpts.
+     * Can be overridden per-post via frontmatter `excerpt_type`.
+     * Does not apply when frontmatter `excerpt` is set manually (used as-is).
+     * @description:zh-CN `<!-- more -->` 及自动摘要的默认渲染类型，可通过 frontmatter `excerpt_type` 逐篇覆盖。
+     * 当 frontmatter 手动指定 `excerpt` 时不生效（直接使用原始字符串）。
+     * @default 'html'
+     */
+    type: ExcerptType
+    /**
+     * @description:en-US Auto-generate excerpt from post content when no manual excerpt is provided
+     * @description:zh-CN 当没有手动指定摘要时，自动从文章内容截取摘要
+     * @default false
+     */
+    auto: boolean
+    /**
+     * @description:en-US Maximum length of auto-generated excerpt (in characters)
+     * @description:zh-CN 自动摘要的最大长度（字符数）
+     * @default 200
+     */
+    length: number
   }
 
   /**
@@ -385,9 +411,14 @@ export interface SiteConfig {
     iv: Uint8Array
     salt: Uint8Array
     /**
-     * @description:zh-CN 全局加密密码 todo
+     * @description:en-US Global encryption password, read from env `VALAXY_ENCRYPT_PASSWORD`.
+     * When a post has `encrypt: true` in frontmatter but no `password`, this is used.
+     * Do NOT put passwords in config files — use `.env` or CI secrets.
+     * @description:zh-CN 全局加密密码，从环境变量 `VALAXY_ENCRYPT_PASSWORD` 读取。
+     * 当文章 frontmatter 设置了 `encrypt: true` 但未指定 `password` 时使用。
+     * 请勿在配置文件中设置密码——请使用 `.env` 文件或 CI secrets。
      */
-    // password: string
+    // password is read from process.env.VALAXY_ENCRYPT_PASSWORD at build time
   }
 
   /**
@@ -395,6 +426,50 @@ export interface SiteConfig {
    * @description:zh-CN 限制代码块的高度，单位是 px
    */
   codeHeightLimit?: number
+
+  /**
+   * @zh llms.txt 及原始 Markdown 文件输出
+   * @en llms.txt and raw Markdown file output
+   * @see https://llmstxt.org/
+   */
+  llms: {
+    /**
+     * @zh 是否开启 llms.txt 和 .md 原始文件输出
+     * @en Enable llms.txt and raw .md file output
+     * @default false
+     */
+    enable: boolean
+    /**
+     * @zh 是否生成 llms-full.txt（包含所有文章完整内容）
+     * @en Whether to generate llms-full.txt (with all post content inlined)
+     * @default true
+     */
+    fullText: boolean
+    /**
+     * @zh 是否为每篇文章生成独立的 .md 文件（可通过 /posts/xxx.md 访问）
+     * @en Whether to generate individual .md files for each post (accessible via /posts/xxx.md)
+     * @default true
+     */
+    files: boolean
+    /**
+     * @zh 自定义提示词（添加到 llms.txt blockquote 部分）
+     * @en Custom prompt text (added to the llms.txt blockquote section)
+     * @default ''
+     */
+    prompt: string
+    /**
+     * @zh 要包含的 markdown 文件 glob 模式（相对于 pages/ 目录）。
+     * 默认为 `['posts\/**\/*.md']` 仅包含 posts。
+     * 设为 `['**\/*.md']` 可包含所有 pages 下的 markdown 文件。
+     * 也可以指定多个目录，如 `['posts\/**\/*.md', 'guide\/**\/*.md']`。
+     * @en Glob patterns for markdown files to include (relative to pages/ directory).
+     * Defaults to `['posts\/**\/*.md']` to only include posts.
+     * Set to `['**\/*.md']` to include all markdown files under pages/.
+     * You can also specify multiple directories, e.g. `['posts\/**\/*.md', 'guide\/**\/*.md']`.
+     * @default ['posts\/**\/*.md']
+     */
+    include?: string[]
+  }
 
   /**
    * @description:en-US client redirect rules

@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import type { MotionVariants } from '@vueuse/motion'
 import type { Post } from 'valaxy'
-import { useMotion } from '@vueuse/motion'
 import { formatDate, useValaxyI18n } from 'valaxy'
 import { ref } from 'vue'
 
@@ -11,8 +11,7 @@ const props = defineProps<{
 
 const show = ref(false)
 
-const itemRef = ref<HTMLElement>()
-useMotion(itemRef, {
+const motionVariants: MotionVariants<never> = {
   initial: { opacity: 0, y: 20 },
   enter: {
     opacity: 1,
@@ -25,14 +24,14 @@ useMotion(itemRef, {
       },
     },
   },
-})
+}
 
 const { $tO } = useValaxyI18n()
 </script>
 
 <template>
   <article
-    ref="itemRef"
+    v-motion="motionVariants"
     class="post-item relative"
     :class="{ show }"
   >
@@ -50,6 +49,7 @@ const { $tO } = useValaxyI18n()
       </div>
       <h2 class="post-title w-full" inline-flex items-center font="serif black">
         <RouterLink :to="post.path || ''" class="post-title-link">
+          <span v-if="post._collection" i-ri-book-2-line class="mr-1 op-60" />
           {{ $tO(post.title) }}
         </RouterLink>
       </h2>
@@ -84,7 +84,7 @@ const { $tO } = useValaxyI18n()
       left: 0;
       width: 0;
       height: 1px;
-      background-color: rgba(var(--va-c-primary-rgb), 0.3);
+      background-color: rgb(var(--va-c-primary-rgb), 0.3);
       transition: width 800ms map.get($cubic-bezier, 'ease-in');
     }
 
@@ -127,7 +127,7 @@ const { $tO } = useValaxyI18n()
       position: absolute;
       width: 2px;
       height: 0;
-      background: rgba(var(--va-c-primary-rgb), 0.3);
+      background: rgb(var(--va-c-primary-rgb), 0.3);
       transition: height 600ms map.get($cubic-bezier, 'ease-in');
     }
 

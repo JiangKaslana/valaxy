@@ -47,10 +47,12 @@ export function sortByUpdated(posts: Post[], desc = true) {
 export function orderByMeta(posts: Post[], orderBy: 'date' | 'updated' = 'date', desc = true) {
   return posts.sort((a, b) => {
     const aDate = +new Date(a[orderBy] || a.date || '')
-    const bDate = +new Date(b[orderBy] || a.date || '')
-    if (desc)
-      return bDate - aDate
-    else
-      return aDate - bDate
+    const bDate = +new Date(b[orderBy] || b.date || '')
+    const diff = desc ? bDate - aDate : aDate - bDate
+    // Stable sort: when dates are equal, use path as tie-breaker
+    // to ensure consistent order between SSR and client hydration
+    if (diff !== 0)
+      return diff
+    return (a.path || '') < (b.path || '') ? -1 : (a.path || '') > (b.path || '') ? 1 : 0
   })
 }

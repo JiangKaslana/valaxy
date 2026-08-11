@@ -1,12 +1,19 @@
 <script lang="ts" setup>
 import { useHead } from '@unhead/vue'
+import { TooltipProvider } from 'reka-ui'
 import { useAppStore } from 'valaxy'
-import { onMounted, watch } from 'vue'
+import { computed, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useThemeConfig } from './composables'
 import { useYunAppStore } from './stores'
 
+const isDev = import.meta.env.DEV
+
 const appStore = useAppStore()
+
+// Use a safe default for SSR; real themeColor is applied after mount
+// to avoid hydration mismatch when user prefers dark mode.
+const safeThemeColor = computed(() => appStore.themeColor)
 
 useHead({
   link: [
@@ -19,11 +26,11 @@ useHead({
   meta: [
     {
       name: 'theme-color',
-      content: appStore.themeColor,
+      content: safeThemeColor,
     },
     {
       name: 'msapplication-TileColor',
-      content: appStore.themeColor,
+      content: safeThemeColor,
     },
   ],
 })
@@ -50,29 +57,30 @@ onMounted(() => {
   document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`)
   app.showLoading = false
 })
-
-const isDev = import.meta.env.DEV
 </script>
 
 <template>
-  <YunStratoApp v-if="yun.isStrato" />
-  <YunDebug v-if="isDev" />
+  <TooltipProvider>
+    <YunStratoApp v-if="yun.isStrato" />
+    <ValaxyDebug v-if="isDev" />
 
-  <YunPageHeaderGradient />
-  <YunNavMenu />
+    <YunPageHeaderGradient />
+    <YunNavMenu />
 
-  <YunFullscreenMenu v-if="yun.isNimbo && !yun.size.isLg" />
-  <YunStratoSidebar v-if="yun.isStrato" />
+    <YunFullscreenMenu v-if="yun.isNimbo" class="lg:hidden" />
+    <YunStratoSidebar v-if="yun.isStrato" />
 
-  <YunFireworks v-if="themeConfig.fireworks.enable" />
-  <slot name="bg">
-    <YunBg v-if="themeConfig.bg_image.enable" />
-  </slot>
-  <Transition name="fade">
-    <YunLoading v-if="app.showLoading" />
-  </Transition>
-  <YunBackToTop />
-
-  <!-- TODO -->
-  <!-- <YunDock /> -->
+    <ClientOnly>
+      <YunFireworks v-if="themeConfig.fireworks?.enable" />
+    </ClientOnly>
+    <slot name="bg">
+      <YunBg v-if="themeConfig.bg_image?.enable" />
+    </slot>
+    <ClientOnly>
+      <Transition name="fade">
+        <YunLoading v-if="app.showLoading" />
+      </Transition>
+    </ClientOnly>
+    <YunBackToTop />
+  </TooltipProvider>
 </template>

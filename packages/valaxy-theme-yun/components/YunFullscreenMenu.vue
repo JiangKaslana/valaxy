@@ -1,16 +1,13 @@
 <script setup lang="ts">
-import { useAppStore } from 'valaxy'
 import { ref } from 'vue'
 import { useYunAppStore } from '../stores'
 
 const yunApp = useYunAppStore()
 const fullscreenMenuRef = ref<HTMLElement>()
-
-const app = useAppStore()
 </script>
 
 <template>
-  <Transition :name="app.isMobile ? 'slide-down' : 'slide-left'">
+  <Transition name="slide-left">
     <div
       v-if="yunApp.fullscreenMenu.isOpen"
       ref="fullscreenMenuRef"
@@ -31,7 +28,7 @@ const app = useAppStore()
       <YunGradientDivider class="my-2 op-20" />
       <YunSidebarLinks />
 
-      <YunGradientDivider v-if="!yunApp.size.isLg" class="my-2 op-20" />
+      <YunGradientDivider class="my-2 op-20 lg:hidden" />
 
       <div class="flex-center">
         <YunConfig />
@@ -49,8 +46,8 @@ const app = useAppStore()
 .slide-down-enter-active,
 .slide-down-leave-active {
   opacity: 1;
-  transition: transform 0.3s map.get($cubic-bezier, 'ease-in-out'),
-    opacity 0.2s map.get($cubic-bezier, 'ease-in-out');
+  transition: transform var(--va-transition-duration) map.get($cubic-bezier, 'ease-in-out'),
+    opacity var(--va-transition-duration-fast) map.get($cubic-bezier, 'ease-in-out');
   transform: translateY(0);
 }
 

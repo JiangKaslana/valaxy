@@ -4,6 +4,7 @@ import { join } from 'node:path'
 import { uniq } from '@antfu/utils'
 import fs from 'fs-extra'
 import { loadConfigFromFile, mergeConfig } from 'vite'
+import { foucGuardHtml } from './scripts/fouc-guard'
 import { toAtFS } from './utils'
 
 /**
@@ -74,6 +75,18 @@ export async function getIndexHtml({ clientRoot, themeRoot, userRoot, config }: 
     html { background-color: var(--va-c-bg); }
   </style>`
   }
+
+  /**
+   * FOUC (Flash of Unstyled Content) guard.
+   * @see ./scripts/fouc-guard.ts
+   * @see build.foucGuard in ValaxyExtendConfig
+   */
+  const foucGuard = config.build?.foucGuard ?? {}
+  const foucEnabled = foucGuard.enabled ?? true
+  const foucMaxDuration = foucGuard.maxDuration ?? 5000
+
+  if (foucEnabled)
+    head += foucGuardHtml(foucMaxDuration)
 
   if (config.siteConfig.lang) {
     head += `

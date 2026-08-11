@@ -4,7 +4,7 @@ import { useInvisibleElement, useValaxyI18n } from 'valaxy'
 import { onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
-import { useYunSpringAnimation } from '../composables/animation'
+import { yunSpringVariants } from '../composables/animation'
 
 const props = withDefaults(defineProps<{
   i?: number
@@ -25,7 +25,7 @@ const router = useRouter()
 
 const collapse = ref(props.collapsable)
 const { t } = useI18n()
-const { $t } = useValaxyI18n()
+const { $tCategory } = useValaxyI18n()
 
 const postCollapseElRef = ref<HTMLElement>()
 const { show } = useInvisibleElement(postCollapseElRef)
@@ -51,19 +51,14 @@ onMounted(() => {
     postCollapseElRef.value = postCollapseEl
 })
 
-const categoryRef = ref<HTMLElement>()
-if (props.level === 1) {
-  useYunSpringAnimation(categoryRef, {
-    i: props.i || 0,
-    y: 20,
-    duration: 200,
-  })
-}
+const motionVariants = props.level === 1
+  ? yunSpringVariants({ i: props.i || 0, y: 20, duration: 200 })
+  : undefined
 </script>
 
 <template>
   <li
-    ref="categoryRef"
+    v-motion="motionVariants"
     class="category-list-item inline-flex items-center cursor-pointer w-full gap-2 px-3 py-2 rounded"
     hover="bg-black/5"
   >
@@ -80,7 +75,7 @@ if (props.level === 1) {
       @click="jumpToDisplayCategory(parentKey)"
     >
       <span>
-        {{ category.name === 'Uncategorized' ? t('category.uncategorized') : $t(category.name) }}
+        {{ category.name === 'Uncategorized' ? t('category.uncategorized') : $tCategory(category.name) }}
       </span>
       <span class="rounded-full px-1.5 bg-black/5 shadow-sm op-60" text="xs">
         {{ category.total }}

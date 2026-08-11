@@ -1,7 +1,5 @@
 ---
-title:
-  en: How to write a theme?
-  zh-CN: 如何编写一个 Valaxy 主题
+title: How to write a theme?
 categories:
   - theme
 end: false
@@ -10,111 +8,132 @@ top: 50
 
 ::: tip
 
-Valaxy 与 Vite/Vue 的生态完全兼容，因此你在编写主题时，可以任意使用第三方的 `Vite`/`Vue` 插件。
+Valaxy is fully compatible with the Vite/Vue ecosystem, so you can freely use third-party `Vite`/`Vue` plugins when writing themes.
 
 - [Authoring a Plugin | Vite](https://vitejs.dev/guide/api-plugin.html#authoring-a-plugin)
 - [Writing a Plugin | Vue](https://vuejs.org/guide/reusability/plugins.html#writing-a-plugin)
 
 :::
 
-Valaxy 主题无需预编译，直接发布源文件即可。
+Valaxy themes don't need pre-compilation; you can directly publish the source files.
 
-撰写中...
+Work in progress...
 
-作为 Valaxy 作者，我可以很轻松的实现自己的主题。
-但也因此，我可能很难了解真正主题开发者的需求。
+As the author of Valaxy, I can easily implement my own themes.
+However, this also means I may have difficulty understanding the real needs of theme developers.
 
-因此，如果你有任何开发主题的相关问题，
-可前往 QQ 频道[「云乐坊」](https://pd.qq.com/s/grfe9jxoe) 或发起 [Discussions](https://github.com/YunYouJun/valaxy/discussions) 与我交流，我将会为您提供尽可能的帮助，并针对泛化的问题撰写文档。
+Therefore, if you have any questions about developing themes,
+please visit the QQ Channel ["Yun Le Fun"](https://pd.qq.com/s/grfe9jxoe) or start a [Discussion](https://github.com/YunYouJun/valaxy/discussions) to communicate with me. I will provide as much help as possible and write documentation for common issues.
 
-> 对了，由于目前的主题并不多，主题作者可以在[这里](/themes/gallery)发现一些来自云游君私人的奖励。
+> By the way, since there aren't many themes yet, theme authors can discover some personal rewards from YunYouJun [here](/themes/gallery).
 
-## 主题示例
+## Theme Examples
 
-- [valaxy-theme-starter](https://github.com/valaxyjs/valaxy-theme-starter): Valaxy 主题开发模版
-- [valaxy-theme-yun](https://github.com/YunYouJun/valaxy/tree/main/packages/valaxy-theme-yun): valaxy-theme-yun 一个更完善的主题示例
-- [valaxy-theme-press](https://github.com/YunYouJun/valaxy/tree/main/packages/valaxy-theme-press): valaxy-theme-press 当前文档主题示例
+- [valaxy-theme-starter](https://github.com/valaxyjs/valaxy-theme-starter): Valaxy theme development template
+- [valaxy-theme-yun](https://github.com/YunYouJun/valaxy/tree/main/packages/valaxy-theme-yun): valaxy-theme-yun, a more complete theme example
+- [valaxy-theme-press](https://github.com/YunYouJun/valaxy/tree/main/packages/valaxy-theme-press): valaxy-theme-press, the current documentation theme example
 
-## 创建主题模板
+## Creating a Theme Template
 
 ::: tip
 
-如果你只想简单点，创建一个自己使用的博客主题而不发布，你可以直接在本地引用你的主题。
+If you just want to keep things simple and create a blog theme for personal use without publishing, you can directly reference your theme locally.
 
-可参见 [demo/custom](https://github.com/YunYouJun/valaxy/tree/main/demo/custom)。
+See [demo/custom](https://github.com/YunYouJun/valaxy/tree/main/demo/custom).
 
 :::
 
 ```bash
-# 使用 valaxy-theme-starter 模版
+# Use valaxy-theme-starter template
 pnpm create valaxy
 # choose Theme
 ```
 
-在动手之前，我们先来了解一下一个 Valaxy 主题的基础结构，它与正常的用户目录结构也十分相似。
+Before diving in, let's first understand the basic structure of a Valaxy theme. It is very similar to a normal user directory structure.
 
-以 [valaxy-theme-yun](https://github.com/YunYouJun/valaxy/tree/main/packages/valaxy-theme-yun) 为例：
+Taking [valaxy-theme-yun](https://github.com/YunYouJun/valaxy/tree/main/packages/valaxy-theme-yun) as an example:
 
-> 尽管它们看起来很多，但是大部分都是可选的，你可以根据主题的需求按需编写。
+> Although it may look like a lot, most of these are optional. You can write only what your theme needs.
 
-- `App.vue`: 主题的入口文件，用于挂载全局的主题组件
-- `README.md`: 主题的说明文档（毫无疑问，这是必不可少的 :P）
-- `client`：主题所暴露给用户的客户端辅助函数
-  - `index.ts`: 主题的客户端辅助函数入口文件
-- `components`: 主题的组件
-  - `ValaxyMain.vue`: 主题的文章渲染组件
-  - `YunSidebar.vue`: 主题的侧边栏组件
-  - `YunSponsor.vue`: 主题的赞助组件
-  - `YunWaline.vue`: 第三方评论 Waline 适配组件
-- `composables`: 辅助的 Composition API
-  - `config.ts`: 主题的配置文件
-  - `helper.ts`: 主题的辅助函数
-  - `index.ts`: 主题的 Composition API 入口文件
-  - `post.ts`: 主题的文章相关的辅助函数
-- `docs`: 主题的文档（自由用你喜欢的结构组织并展示吧！）
-  > 出于定制化与 [DogFooding](https://zh.wikipedia.org/zh-sg/%E5%90%83%E8%87%AA%E5%B7%B1%E7%9A%84%E7%8B%97%E7%B2%AE) 的考虑，Valaxy 的文档采用自身制作，并制作了一个文档主题 [valaxy-theme-press](https://github.com/YunYouJun/valaxy/tree/main/packages/valaxy-theme-press)，如果你只是想要一个简单轻量的文档站点，[Vitepress](https://vitepress.vuejs.org/) 是个不错的选择。（[valaxy-theme-starter](https://github.com/valaxyjs/valaxy-theme-starter) 在未来也许会内置该示例模版。）
-  - `en-US`: 英文文档
-  - `zh-CN`: 中文文档
-- `features`: 主题特色功能，一些不依赖于 Vue Composition API 的功能（区别于 `composables`）
-  - `fireworks.ts`: 烟花点击效果
-- `layouts`: 主题的布局（扩展更多布局）
-  - `default.vue`: 默认布局
-  - `home.vue`: 首页布局
-  - `layout.vue`: 文章列表布局
-  - `post.vue`: 文章布局（放置于 `pages/posts/` 文件夹下的文章默认为 `post 布局）
-  - `tags.vue`: 标签布局
-- `locales`: 主题的多语言支持
-  - `en.yml`: 英文语言文件
-  - `zh-CN.yml`: 中文语言文件
-- `node_modules`: 主题的依赖（请勿提交至仓库）
-- `node`: 主题的 Node 端逻辑
-- `package.json`: 主题的相关信息与依赖
-- `pages`: 主题的默认页面（扩展更多页面）
-  - `index.vue`: 首页
-  - `page`: 普通页
-    - `[page].vue`: 文章列表页，动态路由，如 `/page/2`
-- `setup`: 主题的入口文件（可注册 Vue 插件等）
-  - `main.ts`: 主入口文件 `defineAppSetup`
-- `stores`: 主题的状态管理
-  - `app.ts`: 全局状态管理文件
-- `styles`: 主题的样式
-  - `index.ts`: 主题的样式入口文件
-- `tsconfig.json`: 主题的 TypeScript 配置
-- `types`: 主题的类型声明
-  - `index.d.ts`: 主题的类型声明入口文件
-- `unocss.config.ts`: 主题的 unocss 配置
-- `utils`: 主题的工具函数
-- `valaxy.config.ts`: 主题的配置文件
+- `App.vue`: Theme entry file for mounting global theme components
+- `README.md`: Theme documentation (undoubtedly essential :P)
+- `client`: Client-side helper functions exposed by the theme to users
+  - `index.ts`: Entry file for theme's client-side helper functions
+- `components`: Theme components
+  - `ValaxyMain.vue`: Theme's article rendering component
+  - `YunSidebar.vue`: Theme's sidebar component
+  - `YunSponsor.vue`: Theme's sponsor component
+  - `YunWaline.vue`: Third-party comment Waline adapter component
+- `composables`: Helper Composition API
+  - `config.ts`: Theme configuration file
+  - `helper.ts`: Theme helper functions
+  - `index.ts`: Theme Composition API entry file
+  - `post.ts`: Theme's post-related helper functions
+- `docs`: Theme documentation (organize and present with your favorite structure!)
+  > For customization and [Dogfooding](https://en.wikipedia.org/wiki/Eating_your_own_dog_food) purposes, Valaxy's documentation is built using itself with a documentation theme [valaxy-theme-press](https://github.com/YunYouJun/valaxy/tree/main/packages/valaxy-theme-press). If you just want a simple and lightweight documentation site, [Vitepress](https://vitepress.vuejs.org/) is a good choice. ([valaxy-theme-starter](https://github.com/valaxyjs/valaxy-theme-starter) may include this example template in the future.)
+  - `en-US`: English documentation
+  - `zh-CN`: Chinese documentation
+- `features`: Theme signature features, functions that don't depend on Vue Composition API (different from `composables`)
+  - `fireworks.ts`: Fireworks click effect
+- `layouts`: Theme layouts (extend more layouts)
+  - `default.vue`: Default layout
+  - `home.vue`: Home page layout
+  - `layout.vue`: Post list layout
+  - `post.vue`: Post layout (posts in `pages/posts/` folder default to `post` layout)
+  - `tags.vue`: Tags layout
+- `locales`: Theme multi-language support
+  - `en.yml`: English language file
+  - `zh-CN.yml`: Chinese language file
+- `node_modules`: Theme dependencies (do not commit to repository)
+- `node`: Theme's Node-side logic
+- `package.json`: Theme information and dependencies
+- `pages`: Theme's default pages (extend more pages)
+  - `index.vue`: Home page
+  - `page`: Regular page
+    - `[page].vue`: Post list page, dynamic route, e.g., `/page/2`
+- `setup`: Theme entry file (can register Vue plugins, etc.)
+  - `main.ts`: Main entry file `defineAppSetup`
+- `stores`: Theme state management
+  - `app.ts`: Global state management file
+- `styles`: Theme styles
+  - `index.ts`: Theme styles entry file
+- `tsconfig.json`: Theme's TypeScript configuration
+- `types`: Theme type declarations
+  - `index.d.ts`: Theme type declarations entry file
+- `unocss.config.ts`: Theme's UnoCSS configuration
+- `utils`: Theme utility functions
+- `valaxy.config.ts`: Theme configuration file
 
 ## APIs
 
-我们提供了一个扩展函数，以供你快速扩展页面信息。
+We provide an extension function `extendMd` for you to quickly extend page information.
 
-<!-- TODO -->
+In the theme's `valaxy.config.ts`, you can access each Markdown page's route, frontmatter data, excerpt, and file path through `extendMd`, and modify them at build time.
 
-你也可以直接扩展 [unplugin-vue-router](https://github.com/posva/unplugin-vue-router) 插件中的 `extendRoute`。
+```ts [valaxy.config.ts]
+import { defineTheme } from 'valaxy'
 
-> <https://github.com/posva/unplugin-vue-router/issues/43#issuecomment-1433140464>
+export default defineTheme({
+  extendMd(ctx) {
+    // ctx.route - EditableTreeNode, you can modify route meta
+    // ctx.data  - Readonly frontmatter data parsed from markdown
+    // ctx.content - Raw markdown content
+    // ctx.excerpt - Excerpt content (if exists)
+    // ctx.path  - Absolute file path of the markdown file
+
+    // Example: add custom meta to all pages
+    ctx.route.addToMeta({
+      frontmatter: {
+        customField: 'hello from theme',
+      },
+    })
+  },
+})
+```
+
+You can also directly extend `extendRoute` from the [`vue-router/vite`](https://router.vuejs.org/file-based-routing/) plugin.
+
+> <https://github.com/posva/unplugin-vue-router/issues/43#issuecomment-1433140464> (now part of vue-router)
 
 ```ts [valaxy.config.ts]
 import { defineTheme } from 'valaxy'
@@ -134,7 +153,7 @@ export default defineTheme({
 ```
 
 ```ts
-import type { EditableTreeNode } from 'unplugin-vue-router'
+import type { EditableTreeNode } from 'vue-router/unplugin'
 
 // provided by valaxy, just as a tip
 export interface ValaxyConfig {
@@ -153,17 +172,13 @@ export interface ValaxyConfig {
 
 ::: tip
 
-`data` 解析自 Markdown frontmatter，为原始数据（不可变），将会被合并至 `route.meta.frontmatter` 中。
+`data` is parsed from Markdown frontmatter and is read-only. It will be merged into `route.meta.frontmatter`.
 
 :::
 
 ### Client
 
-#### Toggle Dark {lang="en"}
-
-#### 切换亮暗模式 {lang="zh-CN"}
-
-::: en
+#### Toggle Dark
 
 The following variables are stored in global state, which you can get through `useAppStore`.
 
@@ -171,17 +186,6 @@ The following variables are stored in global state, which you can get through `u
 - `themeColor`: Theme color (follows `isDark`)
 - `toggleDark`: Toggle dark mode
 - `toggleDarkWithTransition`: Toggle dark mode with transition
-
-:::
-
-::: zh-CN
-
-以下变量被存储在全局状态中，你可以通过 `useAppStore` 获取。
-
-- `isDark`: 是否启用了暗黑模式
-- `themeColor`: 主题色（可跟随 isDark 变化）
-- `toggleDark`: 切换暗黑模式
-- `toggleDarkWithTransition`: 带有过渡效果的切换暗黑模式
 
 ```vue [components/YunToggleDark.vue]
 <script lang="ts" setup>
@@ -197,17 +201,7 @@ const appStore = useAppStore()
 </template>
 ```
 
-::: en
-
-> You can configure dark mode related options through `themeConfig.valaxyDarkOptions`.
-
-:::
-
-::: zh-CN
-
-> 你可以通过 `themeConfig.valaxyDarkOptions` 来配置暗黑模式的相关选项。
-
-:::
+> You can configure dark mode options through `themeConfig.valaxyDarkOptions`.
 
 ::: details Default Theme Config.valaxyDarkOptions
 
@@ -219,19 +213,19 @@ const appStore = useAppStore()
 
 #### Hooks
 
-- [钩子](/guide/custom/hooks.md)
+- [Hooks](/guide/custom/hooks.md)
 
-## 开始编写
+## Start Writing
 
 ### App.vue
 
-> 你的入口文件
+> Your entry file
 
-譬如我想要为主题添加一个全局的 Loading 页面。
+For example, I want to add a global Loading page for the theme.
 
-你可以从 valaxy 导入全局状态 `useAppStore`，记录 `showLoading` 来实现。
+You can import the global state `useAppStore` from valaxy and use `showLoading` to implement this.
 
-> 你也可以使用你自己的全局状态管理。参见 [状态管理](#状态管理)。
+> You can also use your own global state management. See [Global State Management](#global-state-management).
 
 ```vue [valaxy-theme-yun/App.vue]
 <script lang="ts" setup>
@@ -249,7 +243,7 @@ onMounted(() => {
 
 <template>
   <!-- ... -->
-  <!-- 添加 Loading 组件，components/YunLoading.vue -->
+  <!-- Add Loading component, components/YunLoading.vue -->
   <!-- https://github.com/YunYouJun/valaxy/blob/main/packages/valaxy-theme-yun/components/YunLoading.vue -->
   <Transition name="fade">
     <YunLoading v-if="app.showLoading" />
@@ -259,21 +253,15 @@ onMounted(() => {
 
 ::: tip
 
-::: zh-CN
-- 你可以通过 `ValaxyApp.vue` 组件完全覆盖根组件，来达成你更深层次的定制化需求。（完全由你自定义，不再默认挂在 `router-view` 等默认处理。）
-:::
-
-::: en
 - You can completely override the root component through the `ValaxyApp.vue` component to achieve deeper customization needs. (Completely customized by you, no longer default handling such as mounting `router-view`, etc.)
-:::
 
 :::
 
 ### ValaxyMain
 
-你需要自定义一个 `ValaxyMain` 组件来决定主题的文章渲染部分。
+You need to customize a `ValaxyMain` component to define the article rendering part of the theme.
 
-> 你可以从 `ValaxyMain` 的 `props` 中获取 `frontmatter` 与 `pageData`。
+> You can get `frontmatter` and `pageData` from the `props` of `ValaxyMain`.
 
 ```vue [valaxy-theme-yun/components/ValaxyMain.vue]
 <script lang="ts" setup>
@@ -297,24 +285,24 @@ defineProps<{
 </template>
 ```
 
-> 示例可参考 [ValaxyMain.vue | valaxy-theme-yun](https://github.com/YunYouJun/valaxy/blob/main/packages/valaxy-theme-yun/components/ValaxyMain.vue)
+> See [ValaxyMain.vue | valaxy-theme-yun](https://github.com/YunYouJun/valaxy/blob/main/packages/valaxy-theme-yun/components/ValaxyMain.vue) for an example.
 
-## 样式
+## Styles
 
-### 引入默认样式
+### Import Default Styles
 
-Valaxy 提供了一些默认样式，你需要在主题中自行引入。
+Valaxy provides some default styles that you need to import in your theme.
 
-例如，新建 `valaxy-theme-yun/setup/main.ts`:
+For example, create `valaxy-theme-yun/setup/main.ts`:
 
 ```ts [setup/main.ts]
 import { defineAppSetup, scrollTo } from 'valaxy'
 import { nextTick } from 'vue'
 
-// 引入 valaxy 公共样式
+// Import valaxy common styles
 import 'valaxy/client/styles/common/index.scss'
 
-// 你也可以按需引入
+// You can also import on demand
 // common
 import 'valaxy/client/styles/common/code.scss'
 import 'valaxy/client/styles/common/hamburger.scss'
@@ -340,18 +328,18 @@ export default defineAppSetup((ctx) => {
 })
 ```
 
-### Markdown 样式
+### Markdown Styles
 
-Markdown 样式是主题呈现文章样式的部分，需要由主题自定义。
+Markdown styles are part of how a theme presents article content and need to be customized by the theme.
 
-你可以参考 [valaxy-theme-press](https://github.com/YunYouJun/valaxy/blob/main/packages/valaxy-theme-press/) 自定义 Markdown 主题的方式，见 [styles/markdown.scss](https://github.com/YunYouJun/valaxy/blob/main/packages/valaxy-theme-press/styles/markdown.scss)。
+You can refer to how [valaxy-theme-press](https://github.com/YunYouJun/valaxy/blob/main/packages/valaxy-theme-press/) customizes its Markdown theme. See [styles/markdown.scss](https://github.com/YunYouJun/valaxy/blob/main/packages/valaxy-theme-press/styles/markdown.scss).
 
-> 如果你想先使用常见的默认样式（后续再进行定制），你可以直接使用 [star-markdown-css](https://github.com/YunYouJun/star-markdown-css)。
-> 使用方式可参见 [valaxy-theme-yun/styles](https://github.com/YunYouJun/valaxy/blob/main/packages/valaxy-theme-yun/styles/index.scss)
+> If you want to use common default styles first (and customize them later), you can directly use [star-markdown-css](https://github.com/YunYouJun/star-markdown-css).
+> See [valaxy-theme-yun/styles](https://github.com/YunYouJun/valaxy/blob/main/packages/valaxy-theme-yun/styles/index.scss) for usage.
 
-### NProgress 进度条
+### NProgress Progress Bar
 
-内置了基础的 [nprogress](https://github.com/rstacruz/nprogress) 样式，你可以通过覆盖 nprogress 的默认样式进行定制：
+Built-in basic [nprogress](https://github.com/rstacruz/nprogress) styles are included. You can customize them by overriding the default nprogress styles:
 
 ```scss [your-theme/styles/index.scss]
 #nprogress {
@@ -370,19 +358,19 @@ Markdown 样式是主题呈现文章样式的部分，需要由主题自定义�
 }
 ```
 
-## 功能
+## Features
 
 ### API
 
-> 你还可以使用 Valaxy 内置的 API 以快速实现相关功能。
+> You can also use Valaxy's built-in APIs to quickly implement related features.
 
-#### 获取用户的 Valaxy Config
+#### Get User's Valaxy Config
 
-你可以通过内置的 `useValaxyConfig` 获取用户的 Valaxy 配置。
+You can get the user's Valaxy configuration through the built-in `useValaxyConfig`.
 
 ::: tip
 
-这部分配置与用户的 `valaxy.config.ts` 中的配置相对应，但它仅在客户端使用，因此并不包含 Node 端相关配置（如 `vite` 等）。
+This configuration corresponds to the user's settings in `valaxy.config.ts`, but it is only used on the client side, so it does not include Node-side configurations (such as `vite`, etc.).
 
 :::
 
@@ -397,9 +385,9 @@ const siteConfig = useSiteConfig()
 const themeConfig = useThemeConfig()
 ```
 
-#### 提供 Typed useThemeConfig
+#### Provide Typed useThemeConfig
 
-你可以提供一个主题的 `useThemeConfig` 函数，以便自己/用户获得带有类型约束的配置。
+You can provide a theme-specific `useThemeConfig` function so that you and your users can get type-constrained configuration.
 
 ```ts [composables/config.ts]
 // custom your theme type
@@ -422,11 +410,11 @@ const themeConfig = useThemeConfig()
 </script>
 ```
 
-#### 获取文章列表
+#### Get Post List
 
-获取文章列表有两种方式。
+There are two ways to get the post list.
 
-- `usePostList`: 获取文章列表（不推荐）
+- `usePostList`: Get the post list (not recommended)
 
 ```ts
 import { usePostList } from 'valaxy'
@@ -434,7 +422,7 @@ import { usePostList } from 'valaxy'
 const postList = usePostList()
 ```
 
-- `useSiteStore`: 获取全局站点信息（推荐）
+- `useSiteStore`: Get global site information (recommended)
 
 ```ts
 const site = useSiteStore()
@@ -442,18 +430,18 @@ const site = useSiteStore()
 // site.postList
 ```
 
-以上两者之间的区别是，`usePostList` 是一个基础函数，每次调用都会获取所有文章并重新过滤一次，而 `useSiteStore` 则会先调用 `usePostList` 并将获取的文章列表缓存在全局的状态中，以供你后续调用。
+The difference between the two is that `usePostList` is a basic function that fetches all posts and re-filters them on every call, while `useSiteStore` calls `usePostList` once and caches the post list in global state for subsequent use.
 
-（此外，`useSiteStore` 还实现了保存文章时（如标题）热更新列表信息的功能。）
+(Additionally, `useSiteStore` also implements hot-updating the list when saving posts, e.g., updating the title.)
 
-> [valaxy/packages/valaxy-theme-yun/components/YunPostList.vue](https://github.com/YunYouJun/valaxy/blob/main/packages/valaxy-theme-yun/components/YunPostList.vue) 是一个使用 `useSiteStore` 展示文章列表的示例。
-> 分页功能可参考 [valaxy-theme-yun/pages/page/[page].vue](https://github.com/YunYouJun/valaxy/blob/main/packages/valaxy-theme-yun/pages/page/%5Bpage%5D.vue) 与 [valaxy-theme-yun/components/YunPostList.vue](https://github.com/YunYouJun/valaxy/blob/main/packages/valaxy-theme-yun/components/YunPostList.vue)。
+> [valaxy/packages/valaxy-theme-yun/components/YunPostList.vue](https://github.com/YunYouJun/valaxy/blob/main/packages/valaxy-theme-yun/components/YunPostList.vue) is an example of using `useSiteStore` to display the post list.
+> For pagination, see [valaxy-theme-yun/pages/page/[page].vue](https://github.com/YunYouJun/valaxy/blob/main/packages/valaxy-theme-yun/pages/page/%5Bpage%5D.vue) and [valaxy-theme-yun/components/YunPostList.vue](https://github.com/YunYouJun/valaxy/blob/main/packages/valaxy-theme-yun/components/YunPostList.vue).
 
-#### 获取文章分类与标签
+#### Get Post Categories and Tags
 
-在你获取文章列表后，`site.postList` 中的每篇文章都具有 `categories`（分类） 与 `tags`（标签） 属性。
+After getting the post list, each post in `site.postList` has `categories` and `tags` properties.
 
-你还可以通过 `useCategories` 与 `useTags` 获取所有分类、标签，其中便包含了与文章的对应关系。
+You can also use `useCategories` and `useTags` to get all categories and tags, which include the mapping to their corresponding posts.
 
 ```ts
 import { useCategories, useTags } from 'valaxy'
@@ -462,17 +450,17 @@ const categories = useCategories()
 const tags = useTags()
 ```
 
-- [valaxy/packages/valaxy-theme-yun/layouts/categories.vue](https://github.com/YunYouJun/valaxy/blob/main/packages/valaxy-theme-yun/layouts/categories.vue) 是一个使用 `useCategories` 展示文章分类的示例。
-- [valaxy/packages/valaxy-theme-yun/layouts/tags.vue](https://github.com/YunYouJun/valaxy/blob/main/packages/valaxy-theme-yun/layouts/tags.vue) 是一个使用 `useTags` 展示文章标签的示例。([`useYunTags`](https://github.com/YunYouJun/valaxy/blob/main/packages/valaxy-theme-yun/composables/tags.ts) 是主题对 `useTags` 的封裝。)
+- [valaxy/packages/valaxy-theme-yun/layouts/categories.vue](https://github.com/YunYouJun/valaxy/blob/main/packages/valaxy-theme-yun/layouts/categories.vue) is an example of using `useCategories` to display post categories.
+- [valaxy/packages/valaxy-theme-yun/layouts/tags.vue](https://github.com/YunYouJun/valaxy/blob/main/packages/valaxy-theme-yun/layouts/tags.vue) is an example of using `useTags` to display post tags. ([`useYunTags`](https://github.com/YunYouJun/valaxy/blob/main/packages/valaxy-theme-yun/composables/tags.ts) is the theme's wrapper around `useTags`.)
 
-> `useTags` 中的 `tags` 为一个对象，其键为标签名，值为对应的文章列表。
-> `useCategories` 可传入参数 `category`（`useCategories('aaa')`） 以获取指定分类的文章列表。
+> In `useTags`, `tags` is an object where the key is the tag name and the value is the corresponding post list.
+> `useCategories` accepts a `category` parameter (`useCategories('aaa')`) to get the post list for a specific category.
 
-#### 获取 Front-matter
+#### Get Front-matter
 
-你可以通过 `useFrontmatter` 获取当前页面的 Front-matter。
+You can get the current page's Front-matter through `useFrontmatter`.
 
-譬如：
+For example:
 
 ```vue
 <script lang="ts" setup>
@@ -486,9 +474,9 @@ const fm = useFrontmatter()
 </template>
 ```
 
-#### 全局状态管理
+#### Global State Management
 
-你可以借助 [Pinia](https://pinia.vuejs.org/) （Valaxy 内置）建立自己的全局状态，并在随后使用它，
+You can use [Pinia](https://pinia.vuejs.org/) (built into Valaxy) to create your own global state and use it later.
 
 ```ts [stores/app.ts]
 import { acceptHMRUpdate, defineStore } from 'pinia'
@@ -512,13 +500,13 @@ import { useYunAppStore } from '../stores/app'
 const yun = useYunAppStore()
 ```
 
-#### 上一篇/下一篇
+#### Previous/Next Post
 
-文章底部通常存在切换上一篇/下一篇的导航。
+Navigation for switching between the previous and next post is typically placed at the bottom of an article.
 
-你可以利用 `siteStore.postList` 自行实现，也可以使用 Valaxy 提供的 `usePrevNext`。
+You can implement it yourself using `siteStore.postList`, or use Valaxy's built-in `usePrevNext`.
 
-> 可参见：[valaxy-theme-yun/components/YunPrevNext.vue](https://github.com/YunYouJun/valaxy/blob/main/packages/valaxy-theme-yun/components/YunPostNav.vue)
+> See: [valaxy-theme-yun/components/YunPrevNext.vue](https://github.com/YunYouJun/valaxy/blob/main/packages/valaxy-theme-yun/components/YunPostNav.vue)
 
 ```ts
 import { usePrevNext } from 'valaxy'
@@ -528,11 +516,11 @@ const [prev, next] = usePrevNext()
 // prev.title prev.path
 ```
 
-### 目录
+### Table of Contents
 
-如果你想要快速实现一个目录，Valaxy 提供了一个内置钩子函数 `useOutline`。
+If you want to quickly implement a table of contents, Valaxy provides a built-in hook function `useOutline`.
 
-你可以用它快速获取文章页的目录信息 `headers` 与对应点击事件 `handleClick`，如：
+You can use it to quickly get the `headers` (outline information) and corresponding `handleClick` event for article pages. For example:
 
 ```vue
 <script setup lang="ts">
@@ -557,13 +545,13 @@ const { headers, handleClick } = useOutline()
 </template>
 ```
 
-> 更多可参见 [PressOutline | valaxy-theme-press](https://github.com/YunYouJun/valaxy/blob/main/packages/valaxy-theme-press/components/PressOutline.vue)。
+> For more details, see [PressOutline | valaxy-theme-press](https://github.com/YunYouJun/valaxy/blob/main/packages/valaxy-theme-press/components/PressOutline.vue).
 
-## 引用静态资源
+## Referencing Static Assets
 
-当主题需要内置一些静态资源（如：图片等），你可以通过相对引用的方式实现。(这在 `scss` 样式文件中也适用)
+When your theme needs to include some static assets (e.g., images), you can use relative imports. (This also applies in `scss` style files.)
 
-譬如 `assets` 与 `components` 处于同一目录下时：
+For example, when `assets` and `components` are in the same directory:
 
 ```bash
 ├── components
@@ -589,52 +577,37 @@ import valaxyLogoPng from '../assets/images/valaxy-logo.png'
 </style>
 ```
 
-## Third Plugin
+## Third Party Plugin
 
-### 实现评论
+### Implement Comments
 
-作为博客，用户通常会有评论的需求。
+As a blog, users typically have commenting needs.
 
-而由于评论系统各不相同，如 Hexo 等主题开发者们通常需在主题侧重复实现多款评论系统。
-这显然是繁琐的。
+Due to the variety of comment systems, theme developers like Hexo often need to repeatedly implement multiple comment systems on the theme side.
+This is obviously tedious.
 
-Valaxy 决定通过插件中心化地提供各类封装好的评论组件和辅助函数。
+Valaxy decided to centrally provide various packaged comment components and helper functions through plugins.
 
-譬如主题开发者，可以借助 `valaxy-addon-waline` 来快速实现 [Waline](https://waline.js.org/) 评论系统的集成。
-而用户则可以使用相同的配置穿梭漫游于不同的主题之间。
+For example, theme developers can use `valaxy-addon-waline` to quickly integrate the [Waline](https://waline.js.org/) comment system.
+Users can use the same configuration to roam between different themes.
 
-> 集成参见 [valaxy-addon-waline](https://github.com/YunYouJun/valaxy/blob/main/packages/valaxy-addon-waline/README.md)。
+> For integration, see [valaxy-addon-waline](https://github.com/YunYouJun/valaxy/blob/main/packages/valaxy-addon-waline/README.md).
 
-## 性能优化 {lang="zh-CN"}
 
-## Performance Optimization {lang="en"}
+## Performance Optimization
 
-### 添加依赖预构建 `optimizeDeps` {lang="zh-CN"}
 
-### Add Dep Pre-bundling `optimizeDeps` {lang="en"}
+### Add Dep Pre-bundling `optimizeDeps`
 
-::: zh-CN
 
-- [原因｜依赖预构建](https://cn.vite.dev/guide/dep-pre-bundling.html#the-why)
-
-为了提高后续页面的加载性能，Vite 将那些具有许多内部模块的 ESM 依赖项转换为单个模块。
-如果你的主题依赖了一些大型的 ESM 包，你可以通过添加 `optimizeDeps` 选项来预构建这些依赖项。
-
-> `dayjs` 已被默认预构建，您无需再次添加。
-> [为什么用 dayjs 而不是 date-fns？](https://api.valaxy.site/notes/app-bundle-size.html#date-fns-vs-dayjs?)
-
-:::
-
-::: en
-
-- [Why｜Dep Pre-bundling](https://vitejs.dev/guide/dep-pre-bundling.html#the-why)
+- [Why | Dep Pre-bundling](https://vitejs.dev/guide/dep-pre-bundling.html#the-why)
 
 To improve the loading performance of subsequent pages, Vite bundles ESM dependencies with many internal modules into a single module.
 If your theme depends on some large ESM packages, you can pre-build these dependencies by adding the `optimizeDeps` option.
 
 > `dayjs` has been pre-built by default, you don't need to add it again.
+> [Why use dayjs instead of date-fns?](https://api.valaxy.site/notes/app-bundle-size.html#date-fns-vs-dayjs?)
 
-:::
 
 ```ts [valaxy.config.ts]
 import { defineTheme } from 'valaxy'
@@ -648,14 +621,30 @@ export default defineTheme({
 })
 ```
 
-### 提醒特殊需求的用户安装第三方插件
+### Using Addon Config in Themes {#using-addon-config-in-themes}
 
-如果您的主题适配了多个 `addon`，但用户并非都需要安装。
-如评论插件：
+When your theme integrates with optional addons (e.g., Algolia search, Waline comments), you can use `useAddonConfig` from `valaxy` to read addon options **without** adding a hard dependency on the addon package.
+
+```vue [components/ThemeSearch.vue]
+<script lang="ts" setup>
+import type { AlgoliaSearchOptions } from '../types/algolia'
+import { useAddonConfig } from 'valaxy'
+
+const algolia = useAddonConfig<AlgoliaSearchOptions>('valaxy-addon-algolia')
+// algolia.value is undefined when the addon is not installed
+</script>
+```
+
+This avoids the previous pattern of using dynamic `import('valaxy-addon-xxx')` with `.then()` / `.catch()`, which was error-prone and not reactive.
+
+### Remind Users with Special Needs to Install Third-party Plugins
+
+If your theme adapts to multiple `addon`s, but not all users need to install them.
+Such as comment plugins:
 
 - `valaxy-addon-waline`
 - `valaxy-addon-twikoo`
 
-当用户没有主动安装对应 `addon` 时（即 `addon` 不存在的情况），则会默认重定向至一个空函数。
+When a user hasn't actively installed the corresponding `addon` (i.e., the `addon` doesn't exist), it will default to redirecting to an empty function.
 
-因此，如果某个插件不是必须的，请在主题文档中提醒想要使用该功能的用户安装对应插件。
+Therefore, if a plugin is not required, please remind users who want to use this feature to install the corresponding plugin in the theme documentation.
