@@ -1,17 +1,17 @@
 ---
-title: 关于我
+title: About Kiana
 date: 2026-08-11
 updated: 2026-08-11
 ---
 
-# 你好，我是 JiangKaslana
+# Kiana's Blog
 
-这里是我的个人博客，用来记录技术实践、项目进展，以及生活中的一些思考。
+This is my personal blog. I use it to record technology, projects, learning notes, and everyday thoughts.
 
-## 这个博客会写什么
+## What I write about
 
-- 开发过程中的问题、方案与复盘
-- 开源项目和工具的使用记录
-- 学习笔记与不定期的生活随笔
+- Development notes and project retrospectives
+- Open-source projects and useful tools
+- Learning notes and occasional life updates
 
-你可以从[文章列表](/posts/)开始阅读，也可以在 [GitHub](https://github.com/JiangKaslana) 查看我的项目。
+Browse the [posts](/posts/) or visit my [GitHub](https://github.com/JiangKaslana).
