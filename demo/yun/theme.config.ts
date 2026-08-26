@@ -4,7 +4,7 @@ export default defineThemeConfig({
   type: 'nimbo',
   banner: {
     enable: true,
-    title: { 'zh-CN': 'Kiana 的博客', en: ['Kiana', 'Blog'] },
+    title: { 'zh-CN': 'Junyu 的博客', en: ['Junyu', 'Blog'] },
     siteNameClass: 'bg-gradient-to-r gradient-text from-#1e3c72 to-dark dark:from-#66a6ff dark:to-blue-500',
   },
   notice: { enable: false },

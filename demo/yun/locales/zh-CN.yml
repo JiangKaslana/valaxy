@@ -5,11 +5,11 @@ excerpt:
 post:
   time_warning: 本文最后更新于 {ago}，内容可能已经发生变化。
 siteConfig:
-  title: Kiana 的博客
+  title: Junyu 的博客
   subtitle: 记录技术、生活与思考
-  description: Kiana 的个人博客，分享技术实践、项目记录与日常思考。
+  description: Junyu 的个人博客，分享技术实践、项目记录与日常思考。
   author:
-    name: Kiana
+    name: Junyu
   social:
     bilibili: 哔哩哔哩
   sponsor:

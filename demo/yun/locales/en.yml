@@ -3,11 +3,11 @@ docs:
 excerpt:
   ai: AI-Generated Excerpt
 siteConfig:
-  title: Kiana's Blog
+  title: Junyu's Blog
   subtitle: Notes on technology, life, and ideas
-  description: Kiana's personal blog for technical notes, project logs, and everyday thoughts.
+  description: Junyu's personal blog for technical notes, project logs, and everyday thoughts.
   author:
-    name: Kiana
+    name: Junyu
   social:
     bilibili: Bilibili
   sponsor:
